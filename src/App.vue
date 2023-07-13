@@ -1,18 +1,41 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <router-view />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, onMounted } from 'vue';
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
+  setup() {
+    const settings = ref({
+      excludeTrivialPatterns: false,
+      selectedSimilarityMeasure: 'Measure 1',
+    });
+
+    onMounted(() => {
+      const storedSettings = JSON.parse(localStorage.getItem('settings'));
+      if (storedSettings) {
+        settings.value.excludeTrivialPatterns = storedSettings.excludeTrivialPatterns || false;
+        settings.value.selectedSimilarityMeasure = storedSettings.selectedSimilarityMeasure;
+      }
+    });
+
+    const saveSettings = (newSettings) => {
+      settings.value = newSettings;
+      localStorage.setItem('settings', JSON.stringify(newSettings));
+    };
+
+    return {
+      settings,
+      saveSettings,
+    };
+  },
 }
 </script>
+
 
 <style>
 #app {
