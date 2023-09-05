@@ -35,8 +35,8 @@ The application will start and is accessible via `http://localhost:8080` in your
 
 ## Usage
 
-- **Search Home Page:** Briefly explain how to use this page.
-- **Tune Page:** Briefly explain how to use this page.
+- **Search Home Page:** 
+- **Tune Page:** 
 
 ## Contributing
 
