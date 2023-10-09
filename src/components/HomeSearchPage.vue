@@ -122,6 +122,12 @@ export default {
         advanced_search(){
             return this.searchType == "advanced" ? true : false
         }
+    },
+    watch: {
+        advanced_search(new_value) {
+            // yes, console.log() is a side effect
+            if(!new_value) this.excludeTrivialPatterns = true
+        }
     }
 }
 </script>
