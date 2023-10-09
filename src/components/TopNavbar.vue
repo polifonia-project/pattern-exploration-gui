@@ -14,14 +14,6 @@
         @click="toggleSettings" />
       <div v-if="settingsOpen" class="dropdown-menu">
         <div class="dropdown-item" @click.stop>
-          Exclude Trivial Patterns
-          <label class="switch">
-            <input type="checkbox" v-model="excludeTrivialPatterns">
-            <span class="slider round"></span>
-          </label>
-
-        </div>
-        <div class="dropdown-item" @click.stop>
           <label for="similarity-measure">Similarity Measure</label>
           <select id="similarity-measure" v-model="selectedSimilarityMeasure">
             <option v-for="measure in similarityMeasures" :key="measure" :value="measure">
