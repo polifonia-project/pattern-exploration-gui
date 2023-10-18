@@ -1,6 +1,6 @@
 ---
 component-id: pattern-exploration-gui
-type: Software
+type: Application
 name: Pattern Exploration GUI
 description: A frontend interface for dispaying data derived from the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph).
 work-package:
@@ -10,7 +10,7 @@ resource: https://github.com/polifonia-project/pattern-exploration-gui/releases
 release-date: 01/03/2024
 release-number: v0.1.0
 licence:
-- GPL-3.0
+- GNU_GPL_v3
 contributors:
 - James McDermott <https://github.com/jmmcd>
 - Pushkar Jajoria <https://github.com/pushkarjajoria>
