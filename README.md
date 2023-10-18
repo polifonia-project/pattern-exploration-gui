@@ -17,8 +17,8 @@ contributors:
 - Rory Sweeney <https://github.com/rorys4>
 related-components:
 - reuses:
-  - "Pattern Explorations Backend https://github.com/polifonia-project/pattern-explorations-backend"
-  - "Patterns knowledge Graph https://github.com/polifonia-project/patterns-knowledge-graph"
+  - "pattern-explorations-backend"
+  - "patterns-knowledge-graph"
 links:
 - https://github.com/polifonia-project/pattern-exploration-gui
 funder:
