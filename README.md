@@ -1,3 +1,34 @@
+---
+component-id: pattern-exploration-gui
+type: Software
+name: Pattern Exploration GUI
+description: A frontend interface for dispaying data derived from the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph).
+work-package:
+- WP5
+project: polifonia-project
+resource: https://github.com/polifonia-project/pattern-exploration-gui/releases
+release-date: 01/03/2024
+release-number: v0.1.0
+licence:
+- GPL-3.0
+contributors:
+- James McDermott <https://github.com/jmmcd>
+- Pushkar Jajoria <https://github.com/pushkarjajoria>
+- Rory Sweeney <https://github.com/rorys4>
+related-components:
+- reuses:
+  - "Pattern Explorations Backend https://github.com/polifonia-project/pattern-explorations-backend"
+  - "Patterns knowledge Graph https://github.com/polifonia-project/patterns-knowledge-graph"
+links:
+- https://github.com/polifonia-project/pattern-exploration-gui
+funder:
+  - name: Horizon 2020 Framework Programme
+    url: https://cordis.europa.eu/programme/id/H2020-EC
+    grant-agreement: "https://cordis.europa.eu/project/id/101004746"
+credits: "This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement N. 101004746."
+---
+
+
 # Music Pattern Exploration - Frontend Server
 
 ## Description
