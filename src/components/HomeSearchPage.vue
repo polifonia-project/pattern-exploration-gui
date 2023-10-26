@@ -2,41 +2,51 @@
     <div class="page-container">
         <TopNavbar />
         <div class="search-container">
-            <input class="search-bar" type="text" v-model="searchTerm" @keypress.enter="search" placeholder="Search...">
+            <div v-if="!advanced_search" class="basic-search-box">
+                <input class="search-bar" type="text" v-model="searchTerm" @keydown.enter="search" placeholder="Search...">
+            </div>
+
+            <div v-else class="advanced-search-box">
+                <div class="advanced-search-item">
+                    <label for="item_pattern">Pattern</label>
+                    <input type="text" id="item_pattern" v-model="pattern" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_corpus">Corpus</label>
+                    <input type="text" id="item_corpus" v-model="corpus" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_composition">Composition</label>
+                    <input type="text" id="item_composition" v-model="composition" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_key">Key</label>
+                    <input type="text" id="item_key" v-model="key" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_time_signature">Time Signature</label>
+                    <input type="text" id="item_time_signature" v-model="timeSignature" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_tune_type">Tune Type</label>
+                    <input type="text" id="item_tune_type" v-model="tuneType" placeholder="">
+                </div>
+                <div class="advanced-search-item">
+                    <label for="item_exclude_trivial_patterns">Exclude Trivial Patterns</label>
+                    <input type="checkbox" id="item_exclude_trivial_patterns" v-model="exclude_trivial_patterns">
+                </div>
+            </div>
+            <div>
+                <button @click="search">Search</button>
+            </div>
+
+
             <select class="search-type" v-model="searchType">
                 <option value="pattern">Pattern</option>
                 <option value="content">Content</option>
                 <option value="metadata">Metadata</option>
                 <option value="advanced">Advanced</option>
             </select>
-            <button @click="search">Search</button>
-        </div>
-
-        <div v-if="advanced_search" class="advanced-search-box">
-            <div class="advanced-search-item">
-                <label for="item_corpus">Corpus</label>
-                <input type="text" id="item_corpus" v-model="corpus" placeholder="">
-            </div>
-            <div class="advanced-search-item">
-                <label for="item_composer">Composer</label>
-                <input type="text" id="item_composer" v-model="composer" placeholder="">
-            </div>
-            <div class="advanced-search-item">
-                <label for="item_composition">Composition</label>
-                <input type="text" id="item_composition" v-model="composition" placeholder="">
-            </div>
-            <div class="advanced-search-item">
-                <label for="item_start_year">From Year</label>
-                <input type="text" id="item_start_year" v-model="start_year" placeholder="">
-            </div>
-            <div class="advanced-search-item">
-                <label for="item_end_year">To Year</label>
-                <input type="text" id="item_end_year" v-model="end_year" placeholder="">
-            </div>
-            <div class="advanced-search-item">
-                <label for="item_exclude_trivial_patterns">Exclude Trivial Patterns</label>
-                <input type="checkbox" id="item_exclude_trivial_patterns" v-model="exclude_trivial_patterns">
-            </div>
         </div>
 
         <!-- Display the search results in a table -->
@@ -44,15 +54,22 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Composer</th>
-                    <th>Year</th>
+                    <th>Tune Type</th>
+                    <th>Key</th>
+                    <th>Signature</th>
+                    <!-- th>Composer</th -->
+                    <!-- th>Year</th -->
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id)">
-                    <td>{{ tune.name }}</td>
-                    <td>{{ tune.composer ? tune.composer: 'Unknown' }}</td>
-                    <td>{{ tune.year ? tune.year : 'Unknown' }}</td>
+                    <td>{{ tune.tune_name.value }}</td>
+                    <td>{{ tune.tuneType.value ? tune.tuneType.value: 'Unknown' }}</td>
+                    <td>{{ tune.key.value ? tune.key.value : 'Unknown' }}</td>
+                    <td>{{ tune.signature.value ? tune.signature.value : 'Unknown' }}</td>
+
+                    <!-- td>{{ tune.composer ? tune.composer: 'Unknown' }}</td -->
+                    <!-- td>{{ tune.year ? tune.year : 'Unknown' }}</td -->
                 </tr>
             </tbody>
         </table>
@@ -73,11 +90,12 @@ export default {
             searchTerm: '',
             searchResults: [],
             searchType: 'pattern',  // set default value to 'pattern',
+            pattern: '',
+            key: '',
+            timeSignature: '',
+            tuneType: '',
             corpus: '',
-            composer: '',
             composition: '',
-            start_year: '',
-            end_year: '',
             exclude_trivial_patterns: true,
         };
     },
@@ -91,10 +109,11 @@ export default {
                     excludeTrivialPatterns: this.exclude_trivial_patterns,
                     searchType: this.searchType,
                     corpus: this.corpus,
-                    composer: this.composer,
+                    pattern: this.pattern,
                     composition: this.composition,
-                    start_year: this.start_year,
-                    end_year: this.end_year,
+                    key: this.key,
+                    timeSignature: this.timeSignature,
+                    tuneType: this.tuneType,
                 };
             }
             else {
@@ -108,11 +127,13 @@ export default {
 
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/search', { params })
                 .then(response => {
-                    this.searchResults = response.data.tunes;
+                    this.searchResults = response.data.results.bindings;
                 })
                 .catch(error => {
                     console.error(error);
                 });
+            
+            this.$router.push({name: 'HomeSearchPage', query: params})
         },
         openDetails(id) {
             this.$router.push({ name: 'CompositionPage', params: { id: id }});
@@ -120,12 +141,11 @@ export default {
     },
     computed: {
         advanced_search(){
-            return this.searchType == "advanced" ? true : false
+            return this.searchType === "advanced"
         }
     },
     watch: {
         advanced_search(new_value) {
-            // yes, console.log() is a side effect
             if(!new_value) this.excludeTrivialPatterns = true
         }
     }
@@ -142,18 +162,19 @@ export default {
 }
 
 .search-container {
-    width: 50%;
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin-top: 2rem;
+    padding: 0;
+    margin: 0;
 }
 
 .search-bar {
     flex: 1;
     height: 35px;
+    width: inherit;
     font-size: 16px;
-    padding: 3px 20px;
+    padding: 0 20px;
     border: 1px solid #dfe1e5;
     border-radius: 24px;
     margin-right: 10px;
@@ -235,14 +256,25 @@ button:focus {
 }
 
 .advanced-search-box {
+    width: 50%;
+    display: grid;
     border: none;
     border-radius: 24px;
-    padding: 10px;
-    margin: 10px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.2s ease, background 0.2s ease;
+    padding: 0 10px;
+    margin: 0 10px;
     line-height: 50px;
-    //width: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+.basic-search-box {
+    width: 50%;
+    display: flex;
+    border: none;
+    border-radius: 24px;
+    padding: 0 10px;
+    margin: 0 10px;
+    line-height: 50px;
     justify-content: center;
     align-items: center;
 }
@@ -266,6 +298,9 @@ button:focus {
     border: 1px solid #dfe1e5;
     border-radius: 24px;
     margin-right: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.5s ease;
 }
 
 </style>
+

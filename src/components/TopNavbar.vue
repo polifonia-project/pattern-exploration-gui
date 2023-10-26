@@ -39,6 +39,7 @@ export default {
     const selectedSimilarityMeasure = ref('');
 
     onMounted(() => {
+      //Download Similarity Measures
       axios.get(process.env.VUE_APP_SERVER_URL + `/api/similarity-measures`)
         .then(response => {
           similarityMeasures.value = response.data;
@@ -131,7 +132,7 @@ export default {
   z-index: 100;
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
   /* align to start */
 }
 
