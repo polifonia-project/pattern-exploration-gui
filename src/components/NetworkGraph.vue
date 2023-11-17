@@ -11,16 +11,38 @@ export default {
     props: ['id', 'tuneData', 'exclude_trivial_patterns'],
     data(){
         return {
-            nodesData: [],
-            linksData: [],
+            graphData: {
+                "nodes": [],
+                "links": []
+            },
+            svg: undefined,
+            width: undefined,
+            height: undefined,
+            simulation: undefined,
+            link: undefined,
+            node: undefined,
+            colours: {},
+            g: undefined,
         }
     },
     methods: {
-        vis() {
-            // Reference to NetworkGraph.vue component context.
-            let ng=this;
-            // Okabe and Ito colourblindness-safe colour palette.
-            let colours = {
+        init(){
+            this.svg = d3.select('svg');
+            this.width = +this.svg.attr('width');
+            this.height = +this.svg.attr('height');
+            this.simulation = d3.forceSimulation()
+                .force("link", d3.forceLink().id(d => d.id).distance(40).strength(1))
+                .force("charge", d3.forceManyBody().strength(-400))
+                .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+                .force("collision", d3.forceCollide().radius(12));
+
+            // add encompassing group for the zoom
+            this.g = this.svg.append('g')
+                .attr('class', 'everything');
+
+            this.link = this.g.append("g").selectAll(".link");
+            this.node = this.g.append("g").selectAll(".node");
+            this.colours = {
                 black: "#000000",
                 orange: "#E69F00",
                 sky_blue: "#56B4E9",
@@ -29,206 +51,155 @@ export default {
                 blue: "#0072B2",
                 vermilion: "#D55E00",
                 reddish_purple: "#CC79A7"
-            }
-            // create somewhere to put the force directed graph
-            let svg = d3.select('svg')
-            let width = +svg.attr('width')
-            let height = +svg.attr('height')
+            };
+        },
+        update() {
+            // Reference to NetworkGraph.vue component context.
+            let ng=this;
 
-            // The force simulation mutates links and nodes, so create a copy
-            // so that re-evaluating this cell produces the same result.
-            let nodesData = this.nodesData.map(d => ({...d}));
-            let linksData = this.linksData.map(d => ({...d}));
-
-            let linkForce = d3.forceLink(linksData)
-                .id(d => d.id)
-            let chargeForce = d3.forceManyBody()
-                .strength(-100)
-            let centerForce = d3.forceCenter(width / 2, height / 2)
-
-            // set up the simulation and add forces
-            let simulation = d3.forceSimulation()
-                .nodes(nodesData)
-                .force('chargeForce', chargeForce)
-                .force('centerForce', centerForce)
-                .force('links', linkForce)
-                .on('tick', tickActions)
-
-            // add encompassing group for the zoom
-            let g = svg.append('g')
-                .attr('class', 'everything')
-
-            // draw lines for the links
-            let link = g.append('g')
-                .attr('class', 'links')
-                .selectAll('line')
-                .data(linksData)
-                .join('line')
+            this.link = this.link.data(this.graphData.links, d => d.id);
+            this.link.exit().remove();
+            const linkEnter = this.link.enter()
+                .append("line")
+                .attr("class", "link")
                 .attr('stroke-width', 2)
-                .style('stroke', linkColour)
+                .style('stroke', this.colours.black);
 
-            // draw circles for the nodes
-            let node = g.append('g')
-                .attr('class', 'nodes')
-                .selectAll('circle')
-                .data(nodesData)
-                .join('circle')
-                .attr('r', nodeRadius)
+            this.link = linkEnter.merge(this.link);
+
+            this.node = this.node.data(this.graphData.nodes, d => d.id);
+            this.node.exit().remove();
+            const nodeEnter = this.node.enter()
+                .append("circle")
+                .attr("class", "node")
+                .attr("r", nodeRadius)
                 .attr('fill', circleColour)
-                .on("click", mouseClick)
-                /*
-                .on('mouseover',function() {
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .attr('r',20);
-                })
-                .on('mouseout',function () {
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .attr('r',15);
-                })
-                 */
+                .call(this.drag(this.simulation));
 
-            // add title
-            node.append('title')
-                .text((d) => d.name)
+            this.node = nodeEnter.merge(this.node);
 
-            // add drag capabilities
-            let dragHandler = d3.drag()
-                .on('start', dragStart)
-                .on('drag', dragDrag)
-                .on('end', dragEnd)
+            this.simulation.nodes(this.graphData.nodes).on("tick", this.tick);
+            this.simulation.force("link").links(this.graphData.links);
+            this.simulation.alpha(1).restart();
 
-            dragHandler(node)
-
-            function mouseClick(event) {
-                let d = event.target.__data__;
-                ng.addNode(d.id);
-            }
+            this.node.on("click", clicked);
 
             // add zoom capabilities
             let zoomHandler = d3.zoom()
                 .on('zoom', zoomActions)
 
-            zoomHandler(svg)
-
-            /** Functions **/
-
-            function nodeRadius(d){
-                if (d.type === 'tune') {
-                    return 15;
-                } else {
-                    return 10;
-                }
-            }
-
-            // Function to choose what color circle we have
-            function circleColour (d) {
-                if (d.type === 'tune') {
-                    return colours.bluish_green;
-                } else {
-                    return colours.reddish_purple;
-                }
-            }
-
-            // Function to choose the line colour and thickness
-            function linkColour (d) {
-                if(d.target === "1_1_1_1") {
-                    return 'red';
-                } else {
-                    return 'green'
-                }
-            }
-
-            // Drag functions
-            // d is the node
-            function dragStart (event, d) {
-                if (!event.active) simulation.alphaTarget(0.3).restart()
-                d.fx = d.x
-                d.fy = d.y
-            }
-
-            // make sure you can't drag the circle outside the box
-            function dragDrag (event, d) {
-                d.fx = event.x
-                d.fy = event.y
-            }
-
-            function dragEnd (event, d) {
-                if (!event.active) simulation.alphaTarget(0)
-                d.fx = null
-                d.fy = null
-            }
+            zoomHandler(this.svg)
 
             // Zoom functions
             function zoomActions (event) {
-                g.attr('transform', event.transform)
+                ng.g.attr('transform', event.transform)
             }
 
-            function tickActions () {
-                // update circle positions each tick of the simulation
-                node
-                    .attr('cx', function (d) { return d.x })
-                    .attr('cy', function (d) { return d.y })
+            function clicked(event, clickedNode) {
+                ng.addNode(clickedNode);
+            }
 
-                // update link positions
-                link
-                    .attr('x1', function (d) { return d.source.x })
-                    .attr('y1', function (d) { return d.source.y })
-                    .attr('x2', function (d) { return d.target.x })
-                    .attr('y2', function (d) { return d.target.y })
+            // Function to determine node radius.
+            function nodeRadius(d){
+                if (d.type === 'tune') {
+                    return 12;
+                } else {
+                    return 8;
+                }
+            }
+
+            // Function to determine node colour.
+            function circleColour (d) {
+                if (d.type === 'tune') {
+                    return ng.colours.bluish_green;
+                } else {
+                    return ng.colours.reddish_purple;
+                }
             }
         },
-        addNode(id){
-            d3.selectAll('.links')
-                .remove()
-            d3.selectAll('.nodes')
-                .remove()
+        tick() {
+            this.link.attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
 
-            if(this.nodesData.find(x => x.id === id).type === "tune"){
-                this.getNeighbourPtnData(id, this.exclude_trivial_patterns)
+            this.node.attr("cx", d => d.x)
+                .attr("cy", d => d.y);
+        },
+        drag(simulation) {
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
             }
-            else if (this.nodesData.find(x => x.id === id).type === "pattern"){
-                this.getNeighbourTuneData(id)
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            return d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended);
+        },
+        addNode(clickedNode){
+            if(this.graphData.nodes.find(x => x.id === clickedNode.id).type === "tune"){
+                this.getNeighbourPtnData(clickedNode, this.exclude_trivial_patterns)
+            }
+            else if (this.graphData.nodes.find(x => x.id === clickedNode.id).type === "pattern"){
+                this.getNeighbourTuneData(clickedNode)
             } else {
                 //error
                 console.error("Invalid node type.")
             }
         },
-        getNeighbourTuneData(ptn){
+        getNeighbourTuneData(clickedNode){
             let params = {
-                id: ptn
+                id: clickedNode.id
             };
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_tunes', { params })
                 .then(response => {
                     let temp = response.data.results.bindings;
                     for (let t in temp){
                         let flag = false;
-                        for(let n in this.nodesData){
-                            if (this.nodesData[n].id === temp[t].id.value) {
+                        for(let n in this.graphData.nodes){
+                            if (this.graphData.nodes[n].id === temp[t].id.value) {
                                 flag = true;
                             }
                         }
 
                         if(!flag) {
-                            this.nodesData.push({'id': temp[t].id.value, 'name': temp[t].title.value, type: "tune"});
+                            const newNode = {
+                                id: temp[t].id.value,
+                                name: temp[t].title.value,
+                                type: "tune",
+                                x: clickedNode.x + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                                y: clickedNode.y + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                            }
+
+                            this.graphData.nodes.push(newNode);
                         }
                     }
-                    this.getPtnTuneLinks(ptn, temp);
+                    this.getPtnTuneLinks(clickedNode.id, temp);
                 })
                 .then(() => {
-                    //FIXME: replace the visualisation data
-                    this.vis();
+                    this.simulation.nodes(this.graphData.nodes).alpha(1).restart(); // Include new nodes in the simulation
+                    this.update();
                 })
                 .catch(error => {
                     console.error(error);
                 });
         },
-        getNeighbourPtnData(id, loc_xtp){
+        getNeighbourPtnData(clickedNode, loc_xtp){
             let params = {
-                id: id,
+                id: clickedNode.id,
                 excludeTrivialPatterns: loc_xtp,
             };
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_patterns', { params })
@@ -236,21 +207,29 @@ export default {
                     let temp = response.data.results.bindings;
                     for (let p in temp) {
                         let flag = false;
-                        for(let n in this.nodesData){
-                            if (this.nodesData[n].id == temp[p].pattern.value.split("/").pop()) {
+                        for(let n in this.graphData.nodes){
+                            if (this.graphData.nodes[n].id == temp[p].pattern.value.split("/").pop()) {
                                 flag = true;
                             }
                         }
 
                         if(!flag) {
-                            this.nodesData.push({'id': temp[p].pattern.value.split("/").pop(), 'name': temp[p].pattern.value.split("/").pop(), type: "pattern" });
+                            const newNode = {
+                                id: temp[p].pattern.value.split("/").pop(),
+                                name: temp[p].pattern.value.split("/").pop(),
+                                type: "pattern",
+                                x: clickedNode.x + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                                y: clickedNode.y + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                            }
+
+                            this.graphData.nodes.push(newNode);
                         }
                     }
-                    this.getTunePtnLinks(id, temp);
+                    this.getTunePtnLinks(clickedNode.id, temp);
                 })
                 .then(() => {
-                    //FIXME: replace the visualisation data
-                    this.vis();
+                    this.simulation.nodes(this.graphData.nodes).alpha(1).restart(); // Include new nodes in the simulation
+                    this.update();
                 })
                 .catch(error => {
                     console.error(error);
@@ -258,21 +237,27 @@ export default {
         },
         getTunePtnLinks(id, nodes){
             for(let p in nodes){
-                this.linksData.push({ 'source': id, 'target': nodes[p].pattern.value.split("/").pop()});
-                //this.linksData.push({ 'source': this.nodesData.find(x => x.id === id), 'target': this.nodesData.find(x => x.id === nodes[p].pattern.value.split("/").pop())});
+                this.graphData.links.push({ 'source': id, 'target': nodes[p].pattern.value.split("/").pop()});
             }
         },
         getPtnTuneLinks(ptn, nodes){
             for(let t in nodes){
-                this.linksData.push({ 'source': ptn, 'target': nodes[t].id.value});
+                this.graphData.links.push({ 'source': ptn, 'target': nodes[t].id.value});
             }
         },
     },
     mounted () {
-        this.nodesData.push({'id': this.id, 'name': this.tuneData[0].title.value, type: "tune" });
+        this.init();
+        let FirstNode = {
+            id: this.id,
+            name: this.tuneData[0].title.value,
+            type: "tune"
+        };
+
+        this.graphData.nodes.push(FirstNode);
 
         //On page load, download the neighbouring pattern nodes data
-        this.getNeighbourPtnData(this.id, this.exclude_trivial_patterns);
+        this.getNeighbourPtnData(FirstNode, this.exclude_trivial_patterns);
     },
 }
 </script>
