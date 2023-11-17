@@ -21,6 +21,7 @@ export default {
             simulation: undefined,
             link: undefined,
             node: undefined,
+            label: undefined,
             colours: {},
             g: undefined,
         }
@@ -42,6 +43,8 @@ export default {
 
             this.link = this.g.append("g").selectAll(".link");
             this.node = this.g.append("g").selectAll(".node");
+            this.label = this.g.append("g").selectAll(".label");
+
             this.colours = {
                 black: "#000000",
                 orange: "#E69F00",
@@ -67,7 +70,7 @@ export default {
 
             this.link = linkEnter.merge(this.link);
 
-            this.node = this.node.data(this.graphData.nodes, d => d.id);
+            this.node = this.node.data(this.graphData.nodes);
             this.node.exit().remove();
             const nodeEnter = this.node.enter()
                 .append("circle")
@@ -78,9 +81,28 @@ export default {
 
             this.node = nodeEnter.merge(this.node);
 
+            // add title
+            this.node.append('title')
+                .text((d) => d.name)
+
+            this.label = this.label.data(this.graphData.nodes);
+            this.label.exit().remove();
+            const labelEnter = this.label.enter()
+                .append("text")
+                .text(d => d.name)
+                .attr("class", "label")
+                .attr("x", d => d.x)
+                .attr("y", d => d.y - 15)
+                .style("text-anchor", "middle")
+                .style("fill", "#555")
+                .style("font-family", "Arial")
+                .style("font-size", "5px");
+
+            this.label = labelEnter.merge(this.label);
+
             this.simulation.nodes(this.graphData.nodes).on("tick", this.tick);
             this.simulation.force("link").links(this.graphData.links);
-            this.simulation.alpha(1).restart();
+            this.simulation.alpha(0.1).restart();
 
             this.node.on("click", clicked);
 
@@ -125,6 +147,9 @@ export default {
 
             this.node.attr("cx", d => d.x)
                 .attr("cy", d => d.y);
+
+            this.label.attr("x", d => d.x) // Update x position based on node's x position
+                .attr("y", d => d.y - 15); // Update y position to maintain a fixed offset from the node
         },
         drag(simulation) {
             function dragstarted(event, d) {
@@ -167,6 +192,7 @@ export default {
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_tunes', { params })
                 .then(response => {
                     let temp = response.data.results.bindings;
+                    let num = temp.length;
                     for (let t in temp){
                         let flag = false;
                         for(let n in this.graphData.nodes){
@@ -180,17 +206,14 @@ export default {
                                 id: temp[t].id.value,
                                 name: temp[t].title.value,
                                 type: "tune",
-                                x: clickedNode.x + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
-                                y: clickedNode.y + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                                x: clickedNode.x + 10.0 * Math.cos(t/num * 2.0 * Math.PI),
+                                y: clickedNode.y + 10.0 * Math.sin(t/num * 2.0 * Math.PI),
                             }
 
                             this.graphData.nodes.push(newNode);
                         }
                     }
-                    this.getPtnTuneLinks(clickedNode.id, temp);
-                })
-                .then(() => {
-                    this.simulation.nodes(this.graphData.nodes).alpha(1).restart(); // Include new nodes in the simulation
+                    this.getLinks(clickedNode, temp);
                     this.update();
                 })
                 .catch(error => {
@@ -205,10 +228,12 @@ export default {
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_patterns', { params })
                 .then(response => {
                     let temp = response.data.results.bindings;
+                    let num = temp.length;
+
                     for (let p in temp) {
                         let flag = false;
                         for(let n in this.graphData.nodes){
-                            if (this.graphData.nodes[n].id == temp[p].pattern.value.split("/").pop()) {
+                            if (this.graphData.nodes[n].id === temp[p].pattern.value.split("/").pop()) {
                                 flag = true;
                             }
                         }
@@ -218,31 +243,42 @@ export default {
                                 id: temp[p].pattern.value.split("/").pop(),
                                 name: temp[p].pattern.value.split("/").pop(),
                                 type: "pattern",
-                                x: clickedNode.x + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
-                                y: clickedNode.y + 30.0 * Math.random() * 2.0 - 1.0, // Replace 30 with a positive or negative random number.
+                                x: clickedNode.x + 10.0 * Math.cos(p/num * 2.0 * Math.PI),
+                                y: clickedNode.y + 10.0 * Math.sin(p/num * 2.0 * Math.PI),
                             }
 
                             this.graphData.nodes.push(newNode);
                         }
                     }
-                    this.getTunePtnLinks(clickedNode.id, temp);
-                })
-                .then(() => {
-                    this.simulation.nodes(this.graphData.nodes).alpha(1).restart(); // Include new nodes in the simulation
+                    this.getLinks(clickedNode, temp);
                     this.update();
                 })
                 .catch(error => {
                     console.error(error);
                 });
         },
-        getTunePtnLinks(id, nodes){
-            for(let p in nodes){
-                this.graphData.links.push({ 'source': id, 'target': nodes[p].pattern.value.split("/").pop()});
-            }
-        },
-        getPtnTuneLinks(ptn, nodes){
-            for(let t in nodes){
-                this.graphData.links.push({ 'source': ptn, 'target': nodes[t].id.value});
+        getLinks(clicked, nodes){
+            for(let n in nodes){
+                let tgt;
+                if(clicked.type === "pattern"){
+                    tgt = nodes[n].id.value;
+                } else {
+                    tgt = nodes[n].pattern.value.split("/").pop();
+                }
+
+                let newLinkId = [clicked.id, tgt].sort().join("");
+
+                // Check if link already exists
+                let flag = false;
+                for(let l in this.graphData.links){
+                    if (this.graphData.links[l].id === newLinkId) {
+                        flag = true;
+                    }
+                }
+
+                if(!flag) {
+                    this.graphData.links.push({ 'source': clicked.id, 'target': tgt, 'id': newLinkId});
+                }
             }
         },
     },
