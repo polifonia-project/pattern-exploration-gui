@@ -32,8 +32,8 @@ export default {
             this.width = +this.svg.attr('width');
             this.height = +this.svg.attr('height');
             this.simulation = d3.forceSimulation()
-                .force("link", d3.forceLink().id(d => d.id).distance(40).strength(1))
-                .force("charge", d3.forceManyBody().strength(-400))
+                .force("link", d3.forceLink().id(d => d.id).distance(10).strength(1))
+                .force("charge", d3.forceManyBody().strength(-300))
                 .force("center", d3.forceCenter(this.width / 2, this.height / 2))
                 .force("collision", d3.forceCollide().radius(12));
 
@@ -83,7 +83,7 @@ export default {
 
             // add title
             this.node.append('title')
-                .text((d) => d.name)
+                .text((d) => d.family)
 
             this.label = this.label.data(this.graphData.nodes);
             this.label.exit().remove();
@@ -205,9 +205,10 @@ export default {
                             const newNode = {
                                 id: temp[t].id.value,
                                 name: temp[t].title.value,
+                                family: temp[t].family.value,
                                 type: "tune",
-                                x: clickedNode.x + 10.0 * Math.cos(t/num * 2.0 * Math.PI),
-                                y: clickedNode.y + 10.0 * Math.sin(t/num * 2.0 * Math.PI),
+                                x: clickedNode.x + 10.0 * Math.cos(t/(num-1) * 2.0 * Math.PI),
+                                y: clickedNode.y + 10.0 * Math.sin(t/(num-1) * 2.0 * Math.PI),
                             }
 
                             this.graphData.nodes.push(newNode);
@@ -242,9 +243,10 @@ export default {
                             const newNode = {
                                 id: temp[p].pattern.value.split("/").pop(),
                                 name: temp[p].pattern.value.split("/").pop(),
+                                family: temp[p].pattern.value.split("/").pop(),
                                 type: "pattern",
-                                x: clickedNode.x + 10.0 * Math.cos(p/num * 2.0 * Math.PI),
-                                y: clickedNode.y + 10.0 * Math.sin(p/num * 2.0 * Math.PI),
+                                x: clickedNode.x + 10.0 * Math.cos(p/(num-1) * 2.0 * Math.PI),
+                                y: clickedNode.y + 10.0 * Math.sin(p/(num-1) * 2.0 * Math.PI),
                             }
 
                             this.graphData.nodes.push(newNode);
@@ -287,6 +289,7 @@ export default {
         let FirstNode = {
             id: this.id,
             name: this.tuneData[0].title.value,
+            family: this.tuneData[0].tuneFamily.value,
             type: "tune"
         };
 
