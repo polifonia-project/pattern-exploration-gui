@@ -24,6 +24,17 @@ export default {
             label: undefined,
             colours: {},
             g: undefined,
+            colourDict: {},
+            currentColour: -1,
+            colourList: {
+                0: "orange",
+                1: "sky_blue",
+                2: "bluish_green",
+                3: "yellow",
+                4: "blue",
+                5: "vermilion",
+                6: "reddish_purple"
+            },
         }
     },
     methods: {
@@ -33,7 +44,7 @@ export default {
             this.height = +this.svg.attr('height');
             this.simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(d => d.id).distance(10).strength(1))
-                .force("charge", d3.forceManyBody().strength(-300))
+                .force("charge", d3.forceManyBody().strength(-100))
                 .force("center", d3.forceCenter(this.width / 2, this.height / 2))
                 .force("collision", d3.forceCollide().radius(12));
 
@@ -76,7 +87,7 @@ export default {
                 .append("circle")
                 .attr("class", "node")
                 .attr("r", nodeRadius)
-                .attr('fill', circleColour)
+                .attr('fill', d => d.colour)
                 .call(this.drag(this.simulation));
 
             this.node = nodeEnter.merge(this.node);
@@ -96,7 +107,8 @@ export default {
                 .style("text-anchor", "middle")
                 .style("fill", "#555")
                 .style("font-family", "Arial")
-                .style("font-size", "5px");
+                .style("font-size", "5px")
+                .style("pointer-events", "none");
 
             this.label = labelEnter.merge(this.label);
 
@@ -127,15 +139,6 @@ export default {
                     return 12;
                 } else {
                     return 8;
-                }
-            }
-
-            // Function to determine node colour.
-            function circleColour (d) {
-                if (d.type === 'tune') {
-                    return ng.colours.bluish_green;
-                } else {
-                    return ng.colours.reddish_purple;
                 }
             }
         },
@@ -202,10 +205,13 @@ export default {
                         }
 
                         if(!flag) {
+                            let colour = this.selectColour(temp[t].family.value);
+
                             const newNode = {
                                 id: temp[t].id.value,
                                 name: temp[t].title.value,
-                                family: temp[t].family.value,
+                                family: temp[t].family.value.split("/").pop(),
+                                colour: colour,
                                 type: "tune",
                                 x: clickedNode.x + 10.0 * Math.cos(t/(num-1) * 2.0 * Math.PI),
                                 y: clickedNode.y + 10.0 * Math.sin(t/(num-1) * 2.0 * Math.PI),
@@ -244,6 +250,7 @@ export default {
                                 id: temp[p].pattern.value.split("/").pop(),
                                 name: temp[p].pattern.value.split("/").pop(),
                                 family: temp[p].pattern.value.split("/").pop(),
+                                colour: this.colours.black,
                                 type: "pattern",
                                 x: clickedNode.x + 10.0 * Math.cos(p/(num-1) * 2.0 * Math.PI),
                                 y: clickedNode.y + 10.0 * Math.sin(p/(num-1) * 2.0 * Math.PI),
@@ -283,15 +290,32 @@ export default {
                 }
             }
         },
+        selectColour(family){
+            let nodeColour;
+            if(family in this.colourDict){
+                nodeColour = this.colourDict[family];
+            } else {
+                this.currentColour = (this.currentColour + 1)%7;
+                nodeColour = this.colours[this.colourList[this.currentColour]];
+                this.colourDict[family] = nodeColour;
+            }
+            return nodeColour;
+        }
     },
     mounted () {
         this.init();
+
+        let colour = this.selectColour(this.tuneData[0].tuneFamily.value);
+
         let FirstNode = {
             id: this.id,
             name: this.tuneData[0].title.value,
-            family: this.tuneData[0].tuneFamily.value,
+            family: this.tuneData[0].tuneFamily.value.split("/").pop(),
+            colour: colour,
             type: "tune"
         };
+
+
 
         this.graphData.nodes.push(FirstNode);
 
@@ -300,3 +324,4 @@ export default {
     },
 }
 </script>
+
