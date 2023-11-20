@@ -11,7 +11,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-6 col-xs-12" v-if="true">
+            <div class="col-lg-6 col-md-12" v-if="true">
                 <div class="row">
                     <table v-if="ptnData.length > 0" class="table table-hover mt-3">
                         <thead>
@@ -21,7 +21,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(tune, index) in ptnData" :key="index">
+                        <tr v-for="(tune, index) in ptnData" :key="index" @click="toPatternPage(tune.pattern.value)">
                             <td>{{ tune.pattern.value.split("/").pop() }}</td>
                             <td>{{ tune.patternFreq.value}}</td>
                         </tr>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 col-xs-12">
+            <div class="col-lg-6 col-md-12">
                 <template v-if="childDataLoaded">
                     <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns"/>
                 </template>
@@ -93,6 +93,10 @@
                     .catch(error => {
                         console.error(error);
                     });
+            },
+            toPatternPage(pattern) {
+                let ptn = pattern.split("/").pop();
+                this.$router.push({ name: 'PatternPage', params: { pattern: ptn}});
             },
         },
         mounted() {
