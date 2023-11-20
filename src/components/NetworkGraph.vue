@@ -43,10 +43,10 @@ export default {
             this.width = +this.svg.attr('width');
             this.height = +this.svg.attr('height');
             this.simulation = d3.forceSimulation()
-                .force("link", d3.forceLink().id(d => d.id).distance(10).strength(1))
-                .force("charge", d3.forceManyBody().strength(-100))
+                .force("link", d3.forceLink().id(d => d.id).distance(80).strength(1))
+                .force("charge", d3.forceManyBody().strength(-50))
                 .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-                .force("collision", d3.forceCollide().radius(12));
+                .force("collision", d3.forceCollide().radius(15));
 
             // add encompassing group for the zoom
             this.g = this.svg.append('g')
@@ -77,7 +77,7 @@ export default {
                 .append("line")
                 .attr("class", "link")
                 .attr('stroke-width', 2)
-                .style('stroke', this.colours.black);
+                .style('stroke', "#9b9b9b");
 
             this.link = linkEnter.merge(this.link);
 
@@ -103,9 +103,9 @@ export default {
                 .text(d => d.name)
                 .attr("class", "label")
                 .attr("x", d => d.x)
-                .attr("y", d => d.y - 15)
+                .attr("y", this.labelLocation)
                 .style("text-anchor", "middle")
-                .style("fill", "#555")
+                .style("fill", this.colours.black)
                 .style("font-family", "Arial")
                 .style("font-size", "5px")
                 .style("pointer-events", "none");
@@ -142,6 +142,14 @@ export default {
                 }
             }
         },
+        labelLocation(d){
+            // Function to determine placement of label above a node.
+            if (d.type === 'tune') {
+                return d.y - 15;
+            } else {
+                return  d.y - 11;
+            }
+        },
         tick() {
             this.link.attr("x1", d => d.source.x)
                 .attr("y1", d => d.source.y)
@@ -152,7 +160,7 @@ export default {
                 .attr("cy", d => d.y);
 
             this.label.attr("x", d => d.x) // Update x position based on node's x position
-                .attr("y", d => d.y - 15); // Update y position to maintain a fixed offset from the node
+                .attr("y", this.labelLocation); // Update y position to maintain a fixed offset from the node
         },
         drag(simulation) {
             function dragstarted(event, d) {
