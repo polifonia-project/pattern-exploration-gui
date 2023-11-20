@@ -37,7 +37,7 @@
             </div>
             <div class="col-lg-6 col-md-12">
                 <template v-if="childDataLoaded">
-                    <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns"/>
+                    <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
                 </template>
             </div>
         </div>
@@ -98,6 +98,15 @@
                 let ptn = pattern.split("/").pop();
                 this.$router.push({ name: 'PatternPage', params: { pattern: ptn}});
             },
+            changeTune(){
+                this.id = this.$route.params.id;
+
+                // On page reroute, firstly, download the tune data for the page's tune.
+                this.getTuneData(this.id);
+
+                // On page reroute, download the most common patterns.
+                this.getPatterns(this.id, true);
+            }
         },
         mounted() {
             // On page load, firstly, download the tune data for the page's tune.

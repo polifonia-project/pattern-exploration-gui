@@ -117,10 +117,11 @@ export default {
             this.simulation.alpha(0.1).restart();
 
             this.node.on("click", clicked);
+            this.node.on("dblclick", dblclicked);
 
             // add zoom capabilities
             let zoomHandler = d3.zoom()
-                .on('zoom', zoomActions)
+                .on('zoom', zoomActions);
 
             zoomHandler(this.svg)
 
@@ -129,8 +130,32 @@ export default {
                 ng.g.attr('transform', event.transform)
             }
 
+            this.svg.on("dblclick.zoom", null);
+
+            let timeout = null;
+
             function clicked(event, clickedNode) {
-                ng.addNode(clickedNode);
+                clearTimeout(timeout);
+                timeout = setTimeout(()=>{
+                    if(!clickedNode.clicked){
+                        clickedNode.clicked = true;
+                        ng.addNode(clickedNode);
+                    }
+                }, 100);
+            }
+
+            function dblclicked(event, clickedNode) {
+                clearTimeout(timeout);
+
+                if(clickedNode.type === "tune"){
+                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id}});
+                    console.log(clickedNode.id);
+                } else if (clickedNode.type === "pattern") {
+                    ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});
+                } else {
+                    //error
+                    console.error("Invalid node type.")
+                }
             }
 
             // Function to determine node radius.
@@ -221,6 +246,7 @@ export default {
                                 family: temp[t].family.value.split("/").pop(),
                                 colour: colour,
                                 type: "tune",
+                                clicked: false,
                                 x: clickedNode.x + 10.0 * Math.cos(t/(num-1) * 2.0 * Math.PI),
                                 y: clickedNode.y + 10.0 * Math.sin(t/(num-1) * 2.0 * Math.PI),
                             }
@@ -260,6 +286,7 @@ export default {
                                 family: temp[p].pattern.value.split("/").pop(),
                                 colour: this.colours.black,
                                 type: "pattern",
+                                clicked: false,
                                 x: clickedNode.x + 10.0 * Math.cos(p/(num-1) * 2.0 * Math.PI),
                                 y: clickedNode.y + 10.0 * Math.sin(p/(num-1) * 2.0 * Math.PI),
                             }
@@ -320,16 +347,20 @@ export default {
             name: this.tuneData[0].title.value,
             family: this.tuneData[0].tuneFamily.value.split("/").pop(),
             colour: colour,
-            type: "tune"
+            type: "tune",
+            clicked: false
         };
-
-
 
         this.graphData.nodes.push(FirstNode);
 
         //On page load, download the neighbouring pattern nodes data
         this.getNeighbourPtnData(FirstNode, this.exclude_trivial_patterns);
     },
+    watch: {
+        $route(){
+            this.$emit('changeComposition')
+        }
+    }
 }
 </script>
 
