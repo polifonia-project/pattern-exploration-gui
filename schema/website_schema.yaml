@@ -1,0 +1,336 @@
+openapi: 3.1.0
+info:
+  title: Your Website API
+  version: 1.0.0
+  description: API schema for the website
+
+paths:
+  /api/similarity-measures:
+    get:
+      summary: Get all available similarity measures.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarityMeasureResponse'
+  /api/search:
+    get:
+      summary: Search for songs, patterns, and tunes
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+
+  /api/tunes/{tune_id}:
+    get:
+      summary: Get information about a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TuneResponse'
+        '503':
+          description: Secondary server is unreachable
+
+  /api/tunes/{tune_id}/patterns:
+    get:
+      summary: Get prominent patterns for a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatternsResponse'
+        '503':
+          description: Secondary server is unreachable
+
+  /api/tunes/{tune_id}/chronology:
+    get:
+      summary: Get chronology information for a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChronologyResponse'
+        '503':
+          description: Secondary server is unreachable
+
+  /api/tunes/{tune_id}/local_network:
+    get:
+      summary: Get local network information for a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalNetworkResponse'
+        '503':
+          description: Secondary server is unreachable
+
+  /api/tunes/{tune_id}/score:
+    get:
+      summary: Get the ABC notation score for a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreResponse'
+        '503':
+          description: Secondary server is unreachable
+
+  /api/tunes/{tune_id}/related_tunes:
+    get:
+      summary: Get a list of most similar tunes for a specific tune
+      parameters:
+        - in: path
+          name: tune_id
+          schema:
+            type: string
+          required: true
+          description: ID of the tune
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RelatedTunesResponse'
+        '503':
+          description: Secondary server is unreachable
+
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      properties:
+        tunes:
+          type: array
+          items:
+            type: object
+            properties: 
+              tuneId:
+                type: string
+                description: Unique ID for tune
+              name:
+                type: string
+                description: Name of the tune
+              composer:
+                type: string
+                description: The name of the tune's composer
+              year:
+                type: integer
+                description: Year
+              
+    TuneResponse:
+      type: object
+      properties:
+        tuneId:
+          type: string
+          description: The unique identifier for the tune
+        title:
+          type: string
+          description: The title of the tune
+        year:
+          type: string
+          description: The year the song was composed
+          nullable: true
+        composer:
+          type: string
+          nullable: true
+          description: The name of the tune's composer
+        composer_metadata:
+          type: object
+        localNetwork:
+          type: object
+          description: Information about the local network of the tune
+          properties:
+            nodes:
+              type: array
+              items:
+                type: object
+                properties:
+                  nodeId:
+                    type: string
+                    description: The unique identifier for the node in the local network
+                  label:
+                    type: string
+                    description: The label or name of the node
+                  # Add more properties as needed for the node in the local network
+            edges:
+              type: array
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                    description: The source node of the edge
+                  target:
+                    type: string
+                    description: The target node of the edge
+                  # Add more properties as needed for the edges in the local network
+        chronology:
+          type: array
+          items:
+            type: object
+            properties:
+              year:
+                type: number
+                description: The year of the event
+              description:
+                type: string
+                description: A description of the event
+              # Add more properties as needed for each event in the chronology
+        prominentPatterns:
+          type: array
+          items:
+            type: object
+            properties:
+              patternId:
+                type: string
+                description: The unique identifier for the prominent pattern
+              title:
+                type: string
+                description: The title of the pattern
+              # Add more properties as needed for each prominent pattern
+        audio:
+          type: string
+          description: The URL or path to the audio file of the tune
+        midiNotes:
+          type: string
+          description: The URL or path to the MIDI notes file of the tune
+        metaInformation:
+          type: object
+          properties:
+            # Add meta information properties specific to the tune
+
+    PatternsResponse:
+      type: object
+      properties:
+        patterns:
+          type: array
+          items:
+            type: object
+            properties:
+              patternId:
+                type: string
+                description: The unique identifier for the pattern
+              position:
+                type: integer
+                description: The position of the pattern in the ABC score
+              # Add more properties as needed for each pattern
+
+    ChronologyResponse:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            type: object
+            properties:
+              tuneName:
+                type: string
+                description: The name of the tune
+              similarity:
+                type: number
+                description: The similarity measure for the tune
+              year:
+                type: integer
+                description: The year of the tune
+              composer:
+                type: string
+                description: The composer of the tune
+              is_root:
+                type: boolean
+                description: A boolean indicating if the tune is the root tune for which the call was made
+              # Add more properties as needed for each entry
+
+    LocalNetworkResponse:
+      type: object
+      properties:
+        adjacencyMatrix:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+              description: The adjacency matrix representing the network
+          # Add more properties as needed for the local network response
+
+    ScoreResponse:
+      type: object
+      properties:
+        abcNotation:
+          type: string
+          description: The ABC notation of the score/tune
+
+    RelatedTunesResponse:
+      type: object
+      properties:
+        relatedTunes:
+          type: array
+          items:
+            type: object
+            properties:
+              tuneId:
+                type: string
+                description: The unique identifier for the related tune
+              similarity:
+                type: number
+                description: The similarity measure for the related tune
+              # Add more properties as needed for each related tune
+    SimilarityMeasureResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+          description: List of similarity measures

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../components/HomeSearchPage.vue'
 import Composition from '../components/CompositionPage.vue'
+import Pattern from '../components/PatternPage.vue'
+import TuneFamily from '../components/TuneFamilyPage.vue'
 
 const routes = [
   {
@@ -11,8 +13,21 @@ const routes = [
   {
     path: '/composition/:id',
     name: 'CompositionPage',
-    component: Composition
-  }
+    component: Composition,
+    props: true
+  },
+  {
+    path: '/pattern/:pattern',
+    name: 'PatternPage',
+    component: Pattern,
+    props: true
+  },
+  {
+    path: '/family/:fam',
+    name: 'TuneFamilyPage',
+    component: TuneFamily,
+    props: true
+  },
 ]
 
 const router = createRouter({

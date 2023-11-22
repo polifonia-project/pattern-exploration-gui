@@ -1,24 +1,25 @@
 <template>
   <div id="app">
+    <TopNavbar />
     <router-view />
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
+import TopNavbar from "@/components/TopNavbar.vue";
 
 export default {
   name: 'App',
+    components: {TopNavbar},
   setup() {
     const settings = ref({
-      excludeTrivialPatterns: false,
       selectedSimilarityMeasure: 'Measure 1',
     });
 
     onMounted(() => {
       const storedSettings = JSON.parse(localStorage.getItem('settings'));
       if (storedSettings) {
-        settings.value.excludeTrivialPatterns = storedSettings.excludeTrivialPatterns || false;
         settings.value.selectedSimilarityMeasure = storedSettings.selectedSimilarityMeasure;
       }
     });
@@ -38,12 +39,5 @@ export default {
 
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

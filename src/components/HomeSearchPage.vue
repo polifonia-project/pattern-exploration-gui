@@ -1,202 +1,220 @@
 <template>
-    <div class="page-container">
-        <TopNavbar />
-        <div class="search-container">
-            <input class="search-bar" type="text" v-model="searchTerm" @keypress.enter="search" placeholder="Search...">
-            <select class="search-type" v-model="searchType">
-                <option value="pattern">Pattern</option>
-                <option value="content">Content</option>
-                <option value="metadata">Metadata</option>
-            </select>
-            <button @click="search">Search</button>
+    <div class="container">
+
+        <div class="row pt-5">
+            <div class="col-8 col-xs-12">
+                <div v-if="!advanced_search" class="mb-3">
+                    <input type="text" class="form-control" v-model="searchTerm" @keydown.enter="search" placeholder="Search...">
+                    <div v-if="!valid_pattern">Valid pattern delimiters: _ , - </div>
+
+                </div>
+
+                <div v-else>
+                    <div class="mb-3 row">
+                        <label for="item_pattern" class="col-sm-2 col-form-label">Pattern</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_pattern" v-model="pattern" @keydown.enter="search">
+                            <div v-if="!valid_pattern">Valid pattern delimiters: _ , -</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="item_corpus" class="col-sm-2 col-form-label">Corpus</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_corpus" v-model="corpus" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="item_title" class="col-sm-2 col-form-label">Title</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_title" v-model="title" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="item_key" class="col-sm-2 col-form-label">Key</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_key" v-model="key" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="item_time_signature" class="col-sm-2 col-form-label">Time Signature</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_time_signature" v-model="timeSignature" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="item_tune_type" class="col-sm-2 col-form-label">Tune Type</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_tune_type" v-model="tuneType" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 col-xs-4">
+                <div>
+                    <button type="button" class="btn btn-primary" @click="search()">Search</button>
+                </div>
+            </div>
+            <div class="col-2 col-xs-8">
+                <select class="form-select" v-model="searchType">
+                    <option value="pattern">Pattern</option>
+                    <option value="title">Title</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
         </div>
-        <!-- Display the search results in a table -->
-        <table v-if="searchResults.length > 0" class="results-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Composer</th>
-                    <th>Year</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id)">
-                    <td>{{ tune.name }}</td>
-                    <td>{{ tune.composer ? tune.composer: 'Unknown' }}</td>
-                    <td>{{ tune.year ? tune.year : 'Unknown' }}</td>
-                </tr>
-            </tbody>
-        </table>
+
+        <div class="row">
+            <!-- Display the search results in a table -->
+            <table v-if="searchResults.length > 0" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Tune Type</th>
+                        <th>Key</th>
+                        <th>Signature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id.value)">
+                        <td>{{ tune.tune_name.value }}</td>
+                        <td>{{ tune.tuneType.value ? tune.tuneType.value: 'Unknown' }}</td>
+                        <td>{{ tune.key.value ? tune.key.value : 'Unknown' }}</td>
+                        <td>{{ tune.signature.value ? tune.signature.value : 'Unknown' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div  v-if="noResults">
+            No results
+        </div>
     </div>
 </template>
     
 <script>
-import TopNavbar from './TopNavbar.vue'
 import axios from 'axios'; // add this line if it's not there already
 
 export default {
     name: 'HomeSearchPage',
-    components: {
-        TopNavbar,
-    },
     data() {
         return {
             searchTerm: '',
             searchResults: [],
-            searchType: 'pattern',  // set default value to 'pattern'
+            searchType: 'pattern',  // set default value to 'pattern',
+            pattern: '',
+            key: '',
+            timeSignature: '',
+            tuneType: '',
+            corpus: '',
+            title: '',
+            noResults: false,
+            valid_pattern: true,
         };
     },
     methods: {
         search() {
-            let params = {
-                query: this.searchTerm,
-                excludeTrivialPatterns: this.$root.excludeTrivialPatterns,
-                similarityMeasure: this.$root.selectedSimilarityMeasure,
-                searchType: this.searchType,
-            };
+            let params = {};
+            if (this.advanced_search) {
+                params = {
+                    searchType: this.searchType,
+                    pattern: this.pattern,
+                    title: this.title,
+                    corpus: this.corpus,
+                    key: this.key,
+                    timeSignature: this.timeSignature,
+                    tuneType: this.tuneType,
+                };
+            } else {
+                params = {
+                    searchType: this.searchType,
+                    searchTerm: this.searchTerm,
+                };
+            }
+
+            this.noResults = false;
+            // Check for all empty fields.
+            if(Object.values(Object.fromEntries(Object.entries(params).filter(e => e[0] != 'searchType'))).every(x => x === null || x === '')) {
+                // Error message.
+                this.noResults = true;
+            } else {
+                // Check if the inputted pattern is valid.
+                if (this.ValidPattern(params)) {
+                    // Replace separators with underscores.
+                    if (params.searchType === "pattern"){
+                        params.searchTerm = this.searchTerm.replaceAll(/[, -]/g, '_')
+                    }
+                    else if(params.searchType === "advanced"){
+                        params.pattern = this.pattern.replaceAll(/[, -]/g, '_')
+                    }
+
+                    // Change url
+                    this.$router.push({name: 'HomeSearchPage', query: params})
+                    // Send request to backend.
+                    this.searchRequest(params);
+                } else {
+                    this.noResults = false;
+                }
+            }
+        },
+        ValidPattern(params){
+            // Method has side effects: sets this.valid_pattern value.
+            // Bad code?
+            if (params.searchType === "pattern"){
+                this.valid_pattern = this.pattern_validation(params.searchTerm);
+            }
+            else if(params.searchType === "advanced"){
+                if(params.pattern === "") this.valid_pattern = true;
+                else this.valid_pattern = this.pattern_validation(params.pattern);
+            }
+            else {
+                this.valid_pattern = true;
+            }
+            return this.valid_pattern;
+        },
+        searchRequest(params) {
             axios.get(process.env.VUE_APP_SERVER_URL + '/api/search', { params })
                 .then(response => {
-                    this.searchResults = response.data.tunes;
+                    this.searchResults = response.data.results.bindings;
+                    this.noResults = this.searchResults.length === 0;
                 })
                 .catch(error => {
                     console.error(error);
                 });
         },
         openDetails(id) {
-        this.$router.push({ name: 'CompositionPage', params: { id: id }});
+            this.$router.push({ name: 'CompositionPage', params: { id: id}});
+        },
+        pattern_validation(ptn){
+            let regex = /^[0-9]([_ ,-][0-9]){3,}$/;
+            return regex.test(ptn);
+        },
+    },
+    computed: {
+        advanced_search(){
+            return this.searchType === "advanced"
+        },
+    },
+    mounted() {
+        this.noResults = false;
+        if (Object.keys(this.$route.query).length !== 0) {
+            this.searchRequest(this.$route.query);
         }
     },
+    watch: {
+        $route(){
+            this.searchTerm = "";
+            this.searchRequest(this.$route.query);
+        }
+    }
 }
 </script>
     
 <style scoped>
-.page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
 
-.search-container {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.search-bar {
-    flex: 1;
-    height: 35px;
-    font-size: 16px;
-    padding: 3px 20px;
-    border: 1px solid #dfe1e5;
-    border-radius: 24px;
-    margin-right: 10px;
-}
+</style>
 
-.search-type {
-    width: 150px;
-    height: 39px;
-    border: 1px solid #dfe1e5;
-    border-radius: 24px;
-    padding: 0 10px;
-    background-color: #f8f9fa;
-    font-size: 16px;
-}
-
-.page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.search-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-}
-
-.search-bar {
-  flex: 1;
-  height: 35px;
-  font-size: 16px;
-  padding: 3px 20px;
-  border: 1px solid #dfe1e5;
-  border-radius: 24px;
-  margin-right: 10px;
-  background: #fff;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.5s ease;
-}
-
-.search-bar:focus {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-.search-type {
-  width: 150px;
-  height: 39px;
-  border: none;
-  border-radius: 24px;
-  padding: 0 10px;
-  background: #003366; /* Navy blue background */
-  color: #ffffff; /* White text */
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.search-type:hover {
-  background: #40B882; /* Green background on hover */
-}
-
-.search-type:focus {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  margin-left: 1rem;
-  padding: 0.6rem 1.5rem;
-  font-size: 1rem;
-  color: #ffffff; /* White text */
-  background-color: #003366; /* Navy blue background */
-  border: none;
-  border-radius: 24px;
-  cursor: pointer;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease, background 0.2s ease;
-}
-
-button:hover {
-  background-color: #40B882; /* Green background on hover */
-}
-
-button:focus {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-.results-table {
-    margin-top: 2rem;
-    width: 80%;
-    border-collapse: collapse;
-}
-
-.results-table th,
-.results-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.results-table th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: center;
-    background-color: #1d3557;
-    color: white;
-}
-.results-table tbody tr {
-    cursor: pointer; /* Changes the mouse cursor to a hand to indicate clickability */
-    transition: background-color 0.1s ease; 
-}
-.results-table tbody tr:hover {
-    background-color: #40B882;
-}
-</style>  
