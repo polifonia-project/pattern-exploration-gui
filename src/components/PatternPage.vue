@@ -5,8 +5,9 @@
                 <h1>Pattern: {{pattern}}</h1>
             </div>
             <div class="row">
-                <div class="col-12">
-                    Insert MIDI Player and stave here.
+                <div class="col-3">
+                    <div id="notation"></div>
+                    <div id="audio"></div>
                 </div>
             </div>
         </div>
@@ -35,6 +36,8 @@
 
 <script>
 import axios from "axios";
+import abcjs from "abcjs";
+import 'abcjs/abcjs-audio.css';
 
 export default {
     name: 'PatternPage',
@@ -42,6 +45,11 @@ export default {
         return{
             tuneData: [],
             pattern: this.$route.params.pattern,
+            melody: 'X:1\n' +
+                'T:Test\n' +
+                'M:C\n' +
+                'K:C\n' +
+                'A B c d AB cd]',
         }
     },
     methods: {
@@ -60,10 +68,44 @@ export default {
                     console.error(error);
                 });
         },
+        createABC(){
+            let diatonic_dict = {
+                0: "c",
+                1: "d",
+                2: "e",
+                3: "f",
+                4: "g",
+                5: "a",
+                6: "b"
+            };
+            let abc_string = 'X:1\n' +
+                'T:Blah\n' +
+                'M:C\n' +
+                'K:C\n';
+
+            let pattern_list = this.pattern.split('_');
+            for(let n in pattern_list){
+                abc_string += diatonic_dict[(pattern_list[n] - 1)%7] + " ";
+            }
+            abc_string += "]"
+            this.melody = abc_string;
+        },
+        setupABC() {
+            if (abcjs.synth.supportsAudio()) {
+                this.createABC();
+                var visualObj = abcjs.renderAbc('notation', this.melody)[0];
+                var synthControl = new abcjs.synth.SynthController();
+                synthControl.load("#audio", null, {displayRestart: true, displayPlay: true, displayProgress: true});
+                synthControl.setTune(visualObj, false);
+            } else {
+                document.querySelector("#audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
+            }
+        }
     },
     mounted() {
         // On page load, download the list of tunes containing this pattern.
         this.getTunesList(this.pattern);
+        this.setupABC();
     }
 }
 </script>
