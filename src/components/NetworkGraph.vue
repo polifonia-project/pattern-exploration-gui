@@ -35,6 +35,10 @@ export default {
                 5: "vermilion",
                 6: "reddish_purple"
             },
+            tune_radius: 24,
+            pattern_radius: 16,
+            label_spacing: 6,
+            label_size: "15px",
         }
     },
     methods: {
@@ -43,10 +47,10 @@ export default {
             this.width = +this.svg.attr('width');
             this.height = +this.svg.attr('height');
             this.simulation = d3.forceSimulation()
-                .force("link", d3.forceLink().id(d => d.id).distance(80).strength(1))
-                .force("charge", d3.forceManyBody().strength(-50))
+                .force("link", d3.forceLink().id(d => d.id).distance(160).strength(1))
+                .force("charge", d3.forceManyBody().strength(-300))
                 .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-                .force("collision", d3.forceCollide().radius(15));
+                .force("collision", d3.forceCollide().radius(60));
 
             // add encompassing group for the zoom
             this.g = this.svg.append('g')
@@ -76,7 +80,7 @@ export default {
             const linkEnter = this.link.enter()
                 .append("line")
                 .attr("class", "link")
-                .attr('stroke-width', 2)
+                .attr('stroke-width', 4)
                 .style('stroke', "#9b9b9b");
 
             this.link = linkEnter.merge(this.link);
@@ -107,7 +111,7 @@ export default {
                 .style("text-anchor", "middle")
                 .style("fill", this.colours.black)
                 .style("font-family", "Arial")
-                .style("font-size", "5px")
+                .style("font-size", this.label_size)
                 .style("pointer-events", "none");
 
             this.label = labelEnter.merge(this.label);
@@ -161,18 +165,18 @@ export default {
             // Function to determine node radius.
             function nodeRadius(d){
                 if (d.type === 'tune') {
-                    return 12;
+                    return ng.tune_radius;
                 } else {
-                    return 8;
+                    return ng.pattern_radius;
                 }
             }
         },
         labelLocation(d){
             // Function to determine placement of label above a node.
             if (d.type === 'tune') {
-                return d.y - 15;
+                return d.y - this.tune_radius - this.label_spacing;
             } else {
-                return  d.y - 11;
+                return  d.y - this.pattern_radius - this.label_spacing;
             }
         },
         tick() {
