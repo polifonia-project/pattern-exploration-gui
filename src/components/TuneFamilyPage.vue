@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <h1>{{fam}} Tune Family</h1>
+        <h1>{{fam.replaceAll("_"," ")}} Tune Family</h1>
     </div>
     <div class="row">
         <div class="col-12">

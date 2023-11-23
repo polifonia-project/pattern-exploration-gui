@@ -247,7 +247,7 @@ export default {
                             const newNode = {
                                 id: temp[t].id.value,
                                 name: temp[t].title.value,
-                                family: temp[t].family.value.split("/").pop(),
+                                family: temp[t].family.value.split("/").pop().replaceAll("_"," "),
                                 colour: colour,
                                 type: "tune",
                                 clicked: false,
@@ -287,7 +287,7 @@ export default {
                             const newNode = {
                                 id: temp[p].pattern.value.split("/").pop(),
                                 name: temp[p].pattern.value.split("/").pop(),
-                                family: temp[p].pattern.value.split("/").pop(),
+                                family: temp[p].pattern.value.split("/").pop().replaceAll("_"," "),
                                 colour: this.colours.black,
                                 type: "pattern",
                                 clicked: false,
@@ -349,7 +349,7 @@ export default {
         let FirstNode = {
             id: this.id,
             name: this.tuneData[0].title.value,
-            family: this.tuneData[0].tuneFamily.value.split("/").pop(),
+            family: this.tuneData[0].tuneFamily.value.split("/").pop().replaceAll("_"," "),
             colour: colour,
             type: "tune",
             clicked: false

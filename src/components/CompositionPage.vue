@@ -6,7 +6,7 @@
             </div>
             <div class="row">
                 <div class="col-12" @click="toTuneFamilyPage(this.tuneFamily)">
-                    Tune Family: {{tuneFamily}}
+                    Tune Family: {{tuneFamily.replaceAll("_"," ")}}
                 </div>
             </div>
         </div>
