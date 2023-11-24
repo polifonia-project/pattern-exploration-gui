@@ -45,11 +45,7 @@ export default {
         return{
             tuneData: [],
             pattern: this.$route.params.pattern,
-            melody: 'X:1\n' +
-                'T:Test\n' +
-                'M:C\n' +
-                'K:C\n' +
-                'A B c d AB cd]',
+            melody: "",
         }
     },
     methods: {
@@ -94,8 +90,8 @@ export default {
         setupABC() {
             if (abcjs.synth.supportsAudio()) {
                 this.createABC();
-                var visualObj = abcjs.renderAbc('notation', this.melody)[0];
-                var synthControl = new abcjs.synth.SynthController();
+                let visualObj = abcjs.renderAbc('notation', this.melody)[0];
+                let synthControl = new abcjs.synth.SynthController();
                 synthControl.load("#audio", null, {displayRestart: true, displayPlay: true, displayProgress: true});
                 synthControl.setTune(visualObj, false);
             } else {
