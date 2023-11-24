@@ -81,7 +81,8 @@ export default {
             let abc_string = 'X:1\n' +
                 'T:Blah\n' +
                 'M:C\n' +
-                'K:C\n';
+                'K:C\n' +
+                'Q: 1/4=100\n';
 
             let pattern_list = this.pattern.split('_');
             for(let n in pattern_list){
