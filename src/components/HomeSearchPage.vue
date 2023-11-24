@@ -137,7 +137,7 @@ export default {
 
             this.noResults = false;
             // Check for all empty fields.
-            if(Object.values(Object.fromEntries(Object.entries(params).filter(e => e[0] != 'searchType'))).every(x => x === null || x === '')) {
+            if(Object.values(Object.fromEntries(Object.entries(params).filter(e => e[0] !== 'searchType'))).every(x => x === null || x === '')) {
                 // Error message.
                 this.noResults = true;
             } else {
@@ -206,15 +206,12 @@ export default {
     },
     watch: {
         $route(){
-            this.searchTerm = "";
-            this.searchRequest(this.$route.query);
+            this.noResults = false;
+            if (Object.keys(this.$route.query).length !== 0) {
+                this.searchRequest(this.$route.query);
+            }
         }
     }
 }
 </script>
-    
-<style scoped>
-
-
-</style>
 
