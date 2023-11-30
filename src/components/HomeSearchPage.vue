@@ -1,15 +1,18 @@
 <template>
     <div class="container">
-
         <div class="row pt-5">
             <div class="col-8 col-xs-12">
                 <div v-if="!advanced_search" class="mb-3">
                     <input type="text" class="form-control" v-model="searchTerm" @keydown.enter="search" placeholder="Search...">
                     <div v-if="!valid_pattern">Valid pattern delimiters: _ , - </div>
-
                 </div>
-
                 <div v-else>
+                    <div class="mb-3 row">
+                        <label for="item_title" class="col-sm-2 col-form-label">Title</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="item_title" v-model="title" placeholder="" @keydown.enter="search">
+                        </div>
+                    </div>
                     <div class="mb-3 row">
                         <label for="item_pattern" class="col-sm-2 col-form-label">Pattern</label>
                         <div class="col-sm-10">
@@ -17,35 +20,24 @@
                             <div v-if="!valid_pattern">Valid pattern delimiters: _ , -</div>
                         </div>
                     </div>
-
                     <div class="mb-3 row">
                         <label for="item_corpus" class="col-sm-2 col-form-label">Corpus</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="item_corpus" v-model="corpus" placeholder="" @keydown.enter="search">
                         </div>
                     </div>
-
-                    <div class="mb-3 row">
-                        <label for="item_title" class="col-sm-2 col-form-label">Title</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_title" v-model="title" placeholder="" @keydown.enter="search">
-                        </div>
-                    </div>
-
                     <div class="mb-3 row">
                         <label for="item_key" class="col-sm-2 col-form-label">Key</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="item_key" v-model="key" placeholder="" @keydown.enter="search">
                         </div>
                     </div>
-
                     <div class="mb-3 row">
                         <label for="item_time_signature" class="col-sm-2 col-form-label">Time Signature</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="item_time_signature" v-model="timeSignature" placeholder="" @keydown.enter="search">
                         </div>
                     </div>
-
                     <div class="mb-3 row">
                         <label for="item_tune_type" class="col-sm-2 col-form-label">Tune Type</label>
                         <div class="col-sm-10">
@@ -67,7 +59,6 @@
                 </select>
             </div>
         </div>
-
         <div class="row">
             <!-- Display the search results in a table -->
             <table v-if="searchResults.length > 0" class="table table-hover">
