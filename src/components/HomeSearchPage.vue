@@ -61,8 +61,8 @@
             </div>
             <div class="col-2 col-xs-8">
                 <select class="form-select" v-model="searchType">
-                    <option value="pattern">Pattern</option>
                     <option value="title">Title</option>
+                    <option value="pattern">Pattern</option>
                     <option value="advanced">Advanced</option>
                 </select>
             </div>
@@ -104,7 +104,7 @@ export default {
         return {
             searchTerm: '',
             searchResults: [],
-            searchType: 'pattern',  // set default value to 'pattern',
+            searchType: 'title',  // set default value to 'pattern',
             pattern: '',
             key: '',
             timeSignature: '',
