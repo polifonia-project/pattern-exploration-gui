@@ -51,6 +51,9 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div v-else>
+                        No patterns in common.
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
