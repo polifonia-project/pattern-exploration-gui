@@ -152,7 +152,7 @@ export default {
                 clearTimeout(timeout);
 
                 if(clickedNode.type === "tune"){
-                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id}});
+                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id}});
                     console.log(clickedNode.id);
                 } else if (clickedNode.type === "pattern") {
                     ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});

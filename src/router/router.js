@@ -11,7 +11,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/composition/:id',
+    path: '/composition/:id/:prev?',
     name: 'CompositionPage',
     component: Composition,
     props: true

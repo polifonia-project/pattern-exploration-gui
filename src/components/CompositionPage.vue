@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="row">
+        <div class="row mb-5">
             <div class="row">
             <h1>Title: {{title}}</h1>
             </div>
@@ -11,20 +11,21 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6 col-md-12" v-if="true">
+            <div class="col-lg-3 col-md-6">
                 <div class="row">
+                    <h5>Patterns in {{title}}</h5>
                     <table v-if="ptnData.length > 0" class="table table-hover mt-3">
                         <thead>
-                        <tr>
-                            <th>Pattern</th>
-                            <th>Occurrences</th>
-                        </tr>
+                            <tr>
+                                <th>Pattern</th>
+                                <th>Occurrences</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(tune, index) in ptnData" :key="index" @click="toPatternPage(tune.pattern.value)">
-                            <td>{{ tune.pattern.value.split("/").pop() }}</td>
-                            <td>{{ tune.patternFreq.value}}</td>
-                        </tr>
+                            <tr v-for="(tune, index) in ptnData" :key="index" @click="toPatternPage(tune.pattern.value)">
+                                <td>{{ tune.pattern.value.split("/").pop() }}</td>
+                                <td>{{ tune.patternFreq.value}}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -33,6 +34,23 @@
                         <input v-model="exclude_trivial_patterns" class="form-check-input" type="checkbox" id="item_exclude_trivial_patterns" checked>
                         <label class="form-check-label" for="item_exclude_trivial_patterns">Exclude Trivial Patterns</label>
                     </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" v-if="prev">
+                <div class="row">
+                    <h5>Patterns in common with {{prev}}</h5>
+                    <table v-if="cmnPtnData.length > 0" class="table table-hover mt-3">
+                        <thead>
+                            <tr>
+                                <th>Pattern</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(tune, index) in cmnPtnData" :key="index" @click="toPatternPage(tune.pattern.value)">
+                                <td>{{ tune.pattern.value.split("/").pop() }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
@@ -54,11 +72,13 @@
         data(){
             return{
                 ptnData: [],
+                cmnPtnData: [],
                 tuneData: [],
                 title: "",
                 tuneFamily: "",
                 exclude_trivial_patterns: true,
                 id: this.$route.params.id,
+                prev: this.$route.params.prev,
                 childDataLoaded: false,
             }
         },
@@ -81,14 +101,27 @@
                         console.error(error);
                     });
             },
-            getPatterns(loc_id, loc_xtp) {
+            getPatterns(tuneId, etp) {
                 let params = {
-                    id: loc_id,
-                    excludeTrivialPatterns: loc_xtp,
+                    id: tuneId,
+                    excludeTrivialPatterns: etp,
                 };
                 axios.get(process.env.VUE_APP_SERVER_URL + '/api/patterns', { params })
                     .then(response => {
                         this.ptnData = response.data.results.bindings;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            },
+            getPatternsInCommon(curr_id, prev_id) {
+                let params = {
+                    id: curr_id,
+                    prev: prev_id
+                };
+                axios.get(process.env.VUE_APP_SERVER_URL + '/api/common_patterns', { params })
+                    .then(response => {
+                        this.cmnPtnData = response.data.results.bindings;
                     })
                     .catch(error => {
                         console.error(error);
@@ -100,20 +133,25 @@
             },
             changeTune(){
                 this.id = this.$route.params.id;
+                this.prev = this.$route.params.prev;
 
-                // On page reroute, firstly, download the tune data for the page's tune.
+                this.init();
+            },
+            init(){
+                // On page load or reroute, firstly, download the tune data for the page's tune.
                 this.getTuneData(this.id);
 
-                // On page reroute, download the most common patterns.
+                // On page load or reroute, download the most common patterns in this tune.
                 this.getPatterns(this.id, true);
+
+                if(this.prev){
+                    // On page load or reroute, download the patterns in common between this tune and the previous one.
+                    this.getPatternsInCommon(this.id, this.prev);
+                }
             }
         },
         mounted() {
-            // On page load, firstly, download the tune data for the page's tune.
-            this.getTuneData(this.id);
-
-            // On page load, download the most common patterns.
-            this.getPatterns(this.id, true);
+            this.init();
         },
         watch: {
             exclude_trivial_patterns() {
