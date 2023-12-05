@@ -233,32 +233,41 @@ export default {
                 .on("end", dragended);
         },
         addNode(clickedNode, nodeContext){
-            if(this.graphData.nodes.find(x => x.id === clickedNode.id).type === "tune"){
-                this.getNeighbourPtnData(clickedNode, this.exclude_trivial_patterns, nodeContext)
-            }
-            else if (this.graphData.nodes.find(x => x.id === clickedNode.id).type === "pattern"){
-                this.getNeighbourTuneData(clickedNode, nodeContext)
+            let params;
+            let endpoint;
+            if(clickedNode.type === "tune") {
+                params = {
+                    id: clickedNode.id,
+                    click_num: clickedNode.clicks,
+                    excludeTrivialPatterns: true
+                };
+                endpoint = '/api/neighbour_patterns';
             } else {
-                //error
-                console.error("Invalid node type.")
+                params = {
+                    id: clickedNode.id,
+                    click_num: clickedNode.clicks
+                };
+                endpoint = '/api/neighbour_tunes';
             }
-        },
-        getNeighbourTuneData(clickedNode, nodeContext){
-            let params = {
-                id: clickedNode.id,
-                click_num: clickedNode.clicks
-            };
-            axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_tunes', { params })
+
+            axios.get(process.env.VUE_APP_SERVER_URL + endpoint, { params })
                 .then(response => {
                     let temp = response.data.results.bindings;
                     let num = temp.length;
                     let node_is_new = [];
                     let num_new = num;
+                    let tempId;
+                    let newId, newName, newFamily, newColour, newType;
 
                     for (let t in temp) {
                         node_is_new[t] = true;
+                        if(clickedNode.type === "tune"){
+                            tempId = temp[t].pattern.value.split("/").pop();
+                        } else {
+                            tempId = temp[t].id.value;
+                        }
                         for (let n in this.graphData.nodes) {
-                            if (this.graphData.nodes[n].id === temp[t].id.value) {
+                            if (this.graphData.nodes[n].id === tempId) {
                                 node_is_new[t] = false;
                                 num_new--;
                             }
@@ -273,69 +282,26 @@ export default {
 
                     for (let t in temp){
                         if(node_is_new[t]) {
-                            let colour = this.selectColour(temp[t].family.value);
-
-                            const newNode = {
-                                id: temp[t].id.value,
-                                name: temp[t].title.value,
-                                family: temp[t].family.value.split("/").pop().replaceAll("_"," "),
-                                colour: colour,
-                                type: "tune",
-                                moreNeighbours: true,
-                                clicks: 0,
-                                x: clickedNode.x + 10.0 * Math.cos(t/num_new * 2.0 * Math.PI),
-                                y: clickedNode.y + 10.0 * Math.sin(t/num_new * 2.0 * Math.PI),
+                            if(clickedNode.type === "tune"){
+                                newId = temp[t].pattern.value.split("/").pop();
+                                newName = temp[t].pattern.value.split("/").pop();
+                                newFamily = temp[t].pattern.value.split("/").pop().replaceAll("_"," ");
+                                newColour = this.colours.black;
+                                newType = "pattern";
+                            } else {
+                                newId = temp[t].id.value;
+                                newName = temp[t].title.value;
+                                newFamily = temp[t].family.value.split("/").pop().replaceAll("_"," ");
+                                newColour = this.selectColour(temp[t].family.value);
+                                newType = "tune";
                             }
 
-                            this.graphData.nodes.push(newNode);
-                        }
-                    }
-                    this.getLinks(clickedNode, temp);
-                    this.update();
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        },
-        getNeighbourPtnData(clickedNode, etp, nodeContext){
-            let params = {
-                id: clickedNode.id,
-                click_num: clickedNode.clicks,
-                excludeTrivialPatterns: etp,
-            };
-            axios.get(process.env.VUE_APP_SERVER_URL + '/api/neighbour_patterns', { params })
-                .then(response => {
-                    let temp = response.data.results.bindings;
-                    let num = temp.length;
-                    let node_is_new = [];
-                    let num_new = num;
-
-                    for (let t in temp) {
-                        node_is_new[t] = true;
-                        for (let n in this.graphData.nodes) {
-                            if (this.graphData.nodes[n].id === temp[t].pattern.value.split("/").pop()) {
-                                node_is_new[t] = false;
-                                num_new--;
-                            }
-                        }
-                    }
-
-                    console.log("angle: " + 1/num_new * 2.0 * 180);
-
-                    if (num === 0 || (num === 1 && node_is_new[0] === false)) {
-                        clickedNode.moreNeighbours = false;
-                        this.noNeighboursFeedback(nodeContext);
-                        return;
-                    }
-
-                    for (let t in temp) {
-                        if(node_is_new[t]) {
-                            const newNode = {
-                                id: temp[t].pattern.value.split("/").pop(),
-                                name: temp[t].pattern.value.split("/").pop(),
-                                family: temp[t].pattern.value.split("/").pop().replaceAll("_"," "),
-                                colour: this.colours.black,
-                                type: "pattern",
+                            let newNode = {
+                                id: newId,
+                                name: newName,
+                                family: newFamily,
+                                colour: newColour,
+                                type: newType,
                                 moreNeighbours: true,
                                 clicks: 0,
                                 x: clickedNode.x + 10.0 * Math.cos(t/num_new * 2.0 * Math.PI),
@@ -406,9 +372,10 @@ export default {
         this.graphData.nodes.push(FirstNode);
 
         //On page load, download the neighbouring pattern nodes data
-        this.getNeighbourPtnData(FirstNode, this.exclude_trivial_patterns);
+        this.addNode(FirstNode, this);
     },
     watch: {
+        //FIXME: What navigating to the pattern page, this watch triggers unnecessary function calls.
         $route(){
             this.$emit('changeComposition')
         }
