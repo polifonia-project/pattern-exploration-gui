@@ -143,13 +143,7 @@ export default {
                 clearTimeout(timeout);
                 timeout = setTimeout(()=>{
                     if(clickedNode.moreNeighbours){
-                        console.log("click");
                         ng.addNode(clickedNode, this);
-
-                        if(!clickedNode.moreNeighbours){
-                            console.log("no more neighbours.");
-                        }
-
                         clickedNode.clicks++;
                     } else {
                         ng.noNeighboursFeedback(this);
@@ -162,7 +156,6 @@ export default {
 
                 if(clickedNode.type === "tune"){
                     ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id}});
-                    console.log(clickedNode.id);
                 } else if (clickedNode.type === "pattern") {
                     ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});
                 } else {
@@ -181,7 +174,6 @@ export default {
             }
         },
         noNeighboursFeedback(node){
-            console.log("Feedback");
             d3.select(node)
                 .attr('stroke',"red")
             d3.select(node)
