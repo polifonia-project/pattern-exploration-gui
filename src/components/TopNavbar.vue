@@ -11,12 +11,6 @@
                         <a class="nav-link active" aria-current="page" href="/">Search</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Composition</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pattern</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#">About</a>
                     </li>
                 </ul>
@@ -73,8 +67,3 @@ export default {
   },
 };
 </script>
-
-<style>
-
-</style>
-
