@@ -57,9 +57,26 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-12">
-                <template v-if="childDataLoaded">
-                    <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
-                </template>
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Exploration</button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Common Patterns Similarity</button>
+                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Van Kranenburg Similarity</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <template v-if="childDataLoaded">
+                            <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
+                        </template>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <template v-if="childDataLoaded">
+                            <NetworkGraphCommonPatterns v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
+                        </template>
+                    </div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">placeholder</div>
+                </div>
             </div>
         </div>
     </div>
@@ -68,10 +85,11 @@
 <script>
     import axios from "axios";
     import NetworkGraph from "@/components/NetworkGraph.vue";
+    import NetworkGraphCommonPatterns from "@/components/NetworkGraphCommonPatterns.vue";
 
     export default {
         name: 'CompositionPage',
-        components: {NetworkGraph},
+        components: {NetworkGraph, NetworkGraphCommonPatterns},
         data(){
             return{
                 ptnData: [],

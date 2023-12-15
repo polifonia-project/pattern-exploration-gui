@@ -1,5 +1,5 @@
 <template>
-    <svg id="svg1" width="1000" height="700" class="container-border"></svg>
+    <svg id="svg2" width="1000" height="700" class="container-border"></svg>
 </template>
 
 <script>
@@ -7,7 +7,7 @@ import * as d3 from 'd3';
 import axios from "axios";
 
 export default {
-    name: 'NetworkGraph',
+    name: 'NetworkGraphCommonPatterns',
     props: ['id', 'tuneData', 'exclude_trivial_patterns'],
     data(){
         return {
@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         init(){
-            this.svg = d3.select('#svg1');
+            this.svg = d3.select('#svg2');
             this.width = +this.svg.attr('width');
             this.height = +this.svg.attr('height');
             this.simulation = d3.forceSimulation()
@@ -225,22 +225,11 @@ export default {
                 .on("end", dragended);
         },
         addNode(clickedNode, nodeContext){
-            let params;
-            let endpoint;
-            if(clickedNode.type === "tune") {
-                params = {
-                    id: clickedNode.id,
-                    click_num: clickedNode.clicks,
-                    excludeTrivialPatterns: true
-                };
-                endpoint = '/api/neighbour_patterns';
-            } else {
-                params = {
-                    id: clickedNode.id,
-                    click_num: clickedNode.clicks
-                };
-                endpoint = '/api/neighbour_tunes';
-            }
+            let params = {
+                id: clickedNode.id,
+                click_num: clickedNode.clicks
+            };
+            let endpoint = '/api/neighbour_tunes_by_common_patterns';
 
             axios.get(process.env.VUE_APP_SERVER_URL + endpoint, { params })
                 .then(response => {
@@ -249,15 +238,10 @@ export default {
                     let node_is_new = [];
                     let num_new = num;
                     let tempId;
-                    let newId, newName, newFamily, newColour, newType;
 
                     for (let t in temp) {
                         node_is_new[t] = true;
-                        if(clickedNode.type === "tune"){
-                            tempId = temp[t].pattern.value.split("/").pop();
-                        } else {
-                            tempId = temp[t].id.value;
-                        }
+                        tempId = temp[t].id.value;
                         for (let n in this.graphData.nodes) {
                             if (this.graphData.nodes[n].id === tempId) {
                                 node_is_new[t] = false;
@@ -274,26 +258,12 @@ export default {
 
                     for (let t in temp){
                         if(node_is_new[t]) {
-                            if(clickedNode.type === "tune"){
-                                newId = temp[t].pattern.value.split("/").pop();
-                                newName = temp[t].pattern.value.split("/").pop();
-                                newFamily = temp[t].pattern.value.split("/").pop().replaceAll("_"," ");
-                                newColour = this.colours.black;
-                                newType = "pattern";
-                            } else {
-                                newId = temp[t].id.value;
-                                newName = temp[t].title.value;
-                                newFamily = temp[t].family.value.split("/").pop().replaceAll("_"," ");
-                                newColour = this.selectColour(temp[t].family.value);
-                                newType = "tune";
-                            }
-
                             let newNode = {
-                                id: newId,
-                                name: newName,
-                                family: newFamily,
-                                colour: newColour,
-                                type: newType,
+                                id: temp[t].id.value,
+                                name: temp[t].title.value,
+                                family: temp[t].family.value.split("/").pop().replaceAll("_"," "),
+                                colour: this.selectColour(temp[t].family.value),
+                                type: "tune",
                                 moreNeighbours: true,
                                 clicks: 0,
                                 x: clickedNode.x + 10.0 * Math.cos(t/num_new * 2.0 * Math.PI),
@@ -312,13 +282,7 @@ export default {
         },
         getLinks(clicked, nodes){
             for(let n in nodes){
-                let tgt;
-                if(clicked.type === "pattern"){
-                    tgt = nodes[n].id.value;
-                } else {
-                    tgt = nodes[n].pattern.value.split("/").pop();
-                }
-
+                let tgt = nodes[n].id.value;
                 let newLinkId = [clicked.id, tgt].sort().join("");
 
                 // Check if link already exists
@@ -374,4 +338,3 @@ export default {
     }
 }
 </script>
-
