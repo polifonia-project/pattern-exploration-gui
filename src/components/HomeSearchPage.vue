@@ -23,7 +23,7 @@
                     <div class="mb-3 row">
                         <label for="item_corpus" class="col-sm-2 col-form-label">Corpus</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_corpus" v-model="corpus" placeholder="" @keydown.enter="search">
+                            <Multiselect id="item_corpus" v-model="corpus" :options="corpusOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
@@ -87,10 +87,14 @@
 </template>
     
 <script>
-import axios from 'axios'; // add this line if it's not there already
+import axios from 'axios';
+import Multiselect from '@vueform/multiselect';
 
 export default {
     name: 'HomeSearchPage',
+    components: {
+        Multiselect
+    },
     data() {
         return {
             searchTerm: '',
@@ -100,7 +104,8 @@ export default {
             key: '',
             timeSignature: '',
             tuneType: '',
-            corpus: '',
+            corpus: [],
+            corpusOptions: [],
             title: '',
             noResults: false,
             valid_pattern: true,
@@ -114,7 +119,7 @@ export default {
                     searchType: this.searchType,
                     pattern: this.pattern,
                     title: this.title,
-                    corpus: this.corpus,
+                    corpus: JSON.parse(JSON.stringify(this.corpus)),
                     key: this.key,
                     timeSignature: this.timeSignature,
                     tuneType: this.tuneType,
@@ -128,7 +133,7 @@ export default {
 
             this.noResults = false;
             // Check for all empty fields.
-            if(Object.values(Object.fromEntries(Object.entries(params).filter(e => e[0] !== 'searchType'))).every(x => x === null || x === '')) {
+            if(Object.values(Object.fromEntries(Object.entries(params).filter(e => e[0] !== 'searchType'))).every(x => x === null || x === '' || x.length === 0)) {
                 // Error message.
                 this.noResults = true;
             } else {
@@ -167,7 +172,13 @@ export default {
             return this.valid_pattern;
         },
         searchRequest(params) {
-            axios.get(process.env.VUE_APP_SERVER_URL + '/api/search', { params })
+            axios.get(process.env.VUE_APP_SERVER_URL + '/api/search',
+                {
+                    params: params,
+                    paramsSerializer: {
+                        indexes: null
+                    }
+                })
                 .then(response => {
                     this.searchResults = response.data.results.bindings;
                     this.noResults = this.searchResults.length === 0;
@@ -183,6 +194,20 @@ export default {
             let regex = /^[0-9]([_ ,-][0-9]){3,}$/;
             return regex.test(ptn);
         },
+        getCorpusList() {
+            let corpuses_list = JSON.parse(localStorage.getItem('corpus'));
+            if (corpuses_list) {
+                this.corpusOptions = corpuses_list;
+            } else {
+                //Download list of corpuses.
+                axios.get(process.env.VUE_APP_SERVER_URL + `/api/corpus_list`)
+                    .then(response => {
+                        this.corpusOptions = response.data;
+                        localStorage.setItem('corpus', JSON.stringify(this.corpusOptions));
+                    })
+                    .catch(() => {});
+            }
+        }
     },
     computed: {
         advanced_search(){
@@ -194,6 +219,8 @@ export default {
         if (Object.keys(this.$route.query).length !== 0) {
             this.searchRequest(this.$route.query);
         }
+        // Download the list of corpuses if necessary.
+        this.getCorpusList();
     },
     watch: {
         $route(){
@@ -206,3 +233,4 @@ export default {
 }
 </script>
 
+<style src="@vueform/multiselect/themes/default.css"></style>

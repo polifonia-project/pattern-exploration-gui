@@ -20,50 +20,7 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from 'vue';
-import axios from 'axios';
-
 export default {
-  name: 'TopNavbar',
-  setup() {
-    const settingsOpen = ref(false);
-    const similarityMeasures = ref([]);
-    const selectedSimilarityMeasure = ref('');
-
-    onMounted(() => {
-      //Download Similarity Measures
-      axios.get(process.env.VUE_APP_SERVER_URL + `/api/similarity-measures`)
-        .then(response => {
-          similarityMeasures.value = response.data;
-          // Load settings from local storage
-          const settings = JSON.parse(localStorage.getItem('settings'));
-          if (settings) {
-            selectedSimilarityMeasure.value = settings.selectedSimilarityMeasure || similarityMeasures.value[0];
-          }
-        })
-        .catch(() => {});
-    });
-
-    const saveSettings = () => {
-      // Save settings to local storage
-      const settings = {
-        selectedSimilarityMeasure: selectedSimilarityMeasure.value,
-      };
-      localStorage.setItem('settings', JSON.stringify(settings));
-    };
-
-    watch(selectedSimilarityMeasure, saveSettings, { immediate: true });
-
-    const toggleMenu = () => {
-      settingsOpen.value = !settingsOpen.value;
-    };
-
-    return {
-      settingsOpen,
-      similarityMeasures,
-      selectedSimilarityMeasure,
-      toggleMenu,
-    };
-  },
+    name: 'TopNavbar'
 };
 </script>

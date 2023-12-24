@@ -10,6 +10,7 @@
   "dependencies": {
     "@kyvg/vue3-notification": "^3.1.2",
     "@popperjs/core": "^2.11.8",
+    "@vueform/multiselect": "^2.6.6",
     "abcjs": "^6.2.3",
     "axios": "^1.6.2",
     "bootstrap": "^5.3.2",
@@ -19,6 +20,7 @@
     "theme-chalk": "^1.0.0-dev.9",
     "vue": "^3.3.11",
     "vue-d3-network": "^0.1.28",
+    "vue-multiselect": "^2.1.8",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
