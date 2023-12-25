@@ -29,19 +29,19 @@
                     <div class="mb-3 row">
                         <label for="item_key" class="col-sm-2 col-form-label">Key</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_key" v-model="key" placeholder="" @keydown.enter="search">
+                            <Multiselect id="item_key" v-model="key" :options="keyOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_time_signature" class="col-sm-2 col-form-label">Time Signature</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_time_signature" v-model="timeSignature" placeholder="" @keydown.enter="search">
+                            <Multiselect id="item_time_signature" v-model="timeSignature" :options="timeSignatureOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_tune_type" class="col-sm-2 col-form-label">Tune Type</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="item_tune_type" v-model="tuneType" placeholder="" @keydown.enter="search">
+                            <Multiselect id="item_tune_type" v-model="tuneType" :options="tuneTypeOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                 </div>
@@ -67,15 +67,15 @@
                         <th>Name</th>
                         <th>Tune Type</th>
                         <th>Key</th>
-                        <th>Signature</th>
+                        <th>Time Signature</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id.value)">
                         <td>{{ tune.tune_name.value }}</td>
-                        <td>{{ tune.tuneType.value ? tune.tuneType.value: 'Unknown' }}</td>
-                        <td>{{ tune.key.value ? tune.key.value : 'Unknown' }}</td>
-                        <td>{{ tune.signature.value ? tune.signature.value : 'Unknown' }}</td>
+                        <td>{{ tune.tuneType.value.split("/").pop() ? tune.tuneType.value: 'Unknown' }}</td>
+                        <td>{{ tune.key.value.split("/").pop() ? tune.key.value : 'Unknown' }}</td>
+                        <td>{{ tune.signature.value.split("/").pop() ? tune.signature.value : 'Unknown' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -100,13 +100,16 @@ export default {
             searchTerm: '',
             searchResults: [],
             searchType: 'title',  // set default value to 'pattern',
+            title: '',
             pattern: '',
-            key: '',
-            timeSignature: '',
-            tuneType: '',
             corpus: [],
             corpusOptions: [],
-            title: '',
+            key: [],
+            keyOptions: [],
+            timeSignature: [],
+            timeSignatureOptions: [],
+            tuneType: [],
+            tuneTypeOptions: [],
             noResults: false,
             valid_pattern: true,
         };
@@ -120,9 +123,9 @@ export default {
                     pattern: this.pattern,
                     title: this.title,
                     corpus: JSON.parse(JSON.stringify(this.corpus)),
-                    key: this.key,
-                    timeSignature: this.timeSignature,
-                    tuneType: this.tuneType,
+                    key: JSON.parse(JSON.stringify(this.key)),
+                    timeSignature: JSON.parse(JSON.stringify(this.timeSignature)),
+                    tuneType: JSON.parse(JSON.stringify(this.tuneType)),
                 };
             } else {
                 params = {
@@ -207,6 +210,48 @@ export default {
                     })
                     .catch(() => {});
             }
+        },
+        getKeyList() {
+            let keys_list = JSON.parse(localStorage.getItem('key'));
+            if (keys_list) {
+                this.keyOptions = keys_list;
+            } else {
+                //Download list of key.
+                axios.get(process.env.VUE_APP_SERVER_URL + `/api/keys_list`)
+                    .then(response => {
+                        this.keyOptions = response.data;
+                        localStorage.setItem('key', JSON.stringify(this.keyOptions));
+                    })
+                    .catch(() => {});
+            }
+        },
+        getTimeSigList() {
+            let time_sig_list = JSON.parse(localStorage.getItem('timeSignature'));
+            if (time_sig_list) {
+                this.timeSignatureOptions = time_sig_list;
+            } else {
+                //Download list of time signatures.
+                axios.get(process.env.VUE_APP_SERVER_URL + `/api/time_sig_list`)
+                    .then(response => {
+                        this.timeSignatureOptions = response.data;
+                        localStorage.setItem('timeSignature', JSON.stringify(this.timeSignatureOptions));
+                    })
+                    .catch(() => {});
+            }
+        },
+        getTuneTypeList() {
+            let tune_type_list = JSON.parse(localStorage.getItem('tuneType'));
+            if (tune_type_list) {
+                this.tuneTypeOptions = tune_type_list;
+            } else {
+                //Download list of tune types.
+                axios.get(process.env.VUE_APP_SERVER_URL + `/api/tune_type_list`)
+                    .then(response => {
+                        this.tuneTypeOptions = response.data;
+                        localStorage.setItem('tuneType', JSON.stringify(this.tuneTypeOptions));
+                    })
+                    .catch(() => {});
+            }
         }
     },
     computed: {
@@ -221,6 +266,12 @@ export default {
         }
         // Download the list of corpuses if necessary.
         this.getCorpusList();
+        // Download the list of keys if necessary.
+        this.getKeyList();
+        // Download the list of time signatures if necessary.
+        this.getTimeSigList();
+        // Download the list of tune types if necessary.
+        this.getTuneTypeList();
     },
     watch: {
         $route(){
