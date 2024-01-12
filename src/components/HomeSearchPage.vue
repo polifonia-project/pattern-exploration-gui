@@ -65,6 +65,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>ID</th>
                         <th>Tune Type</th>
                         <th>Key</th>
                         <th>Time Signature</th>
@@ -73,6 +74,7 @@
                 <tbody>
                     <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id.value)">
                         <td>{{ tune.tune_name.value }}</td>
+                        <td>{{ tune.id.value }}</td>
                         <td>{{ tune.tuneType.value.split("/").pop() ? tune.tuneType.value: 'Unknown' }}</td>
                         <td>{{ tune.key.value.split("/").pop() ? tune.key.value : 'Unknown' }}</td>
                         <td>{{ tune.signature.value.split("/").pop() ? tune.signature.value : 'Unknown' }}</td>
