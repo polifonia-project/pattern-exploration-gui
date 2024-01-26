@@ -1,5 +1,5 @@
 <template>
-    <svg id="svg2" width="1000" height="700" class="container-border"></svg>
+    <svg id="svg2" width="100%" height="auto" style="border:1px solid black" viewBox="0 0 1000 700" class="container-border col-lg-12"></svg>
 </template>
 
 <script>
@@ -22,7 +22,6 @@ export default {
             link: undefined,
             node: undefined,
             label: undefined,
-            colours: {},
             g: undefined,
             colourDict: {},
             currentColour: -1,
@@ -35,17 +34,33 @@ export default {
                 5: "vermilion",
                 6: "reddish_purple"
             },
+            colours: {
+                black: "#000000",
+                orange: "#E69F00",
+                sky_blue: "#56B4E9",
+                bluish_green: "#009E73",
+                yellow: "#F0E442",
+                blue: "#0072B2",
+                vermilion: "#D55E00",
+                reddish_purple: "#CC79A7"
+            },
             tune_radius: 24,
             pattern_radius: 16,
             label_spacing: 6,
             label_size: "15px",
+            clickedNodes: [],
+            numNodesAdded: [],
+            numLinksAdded: [],
         }
     },
     methods: {
         init(){
+            // Reference to NetworkGraph.vue component context.
+            let ng=this;
+
             this.svg = d3.select('#svg2');
-            this.width = +this.svg.attr('width');
-            this.height = +this.svg.attr('height');
+            this.width = 1000;
+            this.height = 700;
             this.simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(d => d.id).distance(160).strength(1))
                 .force("charge", d3.forceManyBody().strength(-300))
@@ -60,16 +75,73 @@ export default {
             this.node = this.g.append("g").selectAll(".node");
             this.label = this.g.append("g").selectAll(".label");
 
-            this.colours = {
-                black: "#000000",
-                orange: "#E69F00",
-                sky_blue: "#56B4E9",
-                bluish_green: "#009E73",
-                yellow: "#F0E442",
-                blue: "#0072B2",
-                vermilion: "#D55E00",
-                reddish_purple: "#CC79A7"
-            };
+            //Back button
+            let backButton = this.svg.append('g')
+
+            backButton.append('path')
+                .attr('d', 'M23.94624 27.25376a1.28 1.28 0 0 1-1.81312 1.81312l-7.68-7.68a1.28 1.28 0 0 1 0-1.81312l7.68-7.68a1.28 1.28 0 1 1 1.81312 1.81312L17.16992 20.48l6.77632 6.77376zM20.48 40.96A20.48 20.48 0 1 1 20.48 0a20.48 20.48 0 0 1 0 40.96zm0-2.56a17.92 17.92 0 1 0 0-35.84 17.92 17.92 0 0 0 0 35.84z')
+                .attr('fill', 'black');
+            backButton.append('circle')
+                .attr("r", '20.48')
+                .attr('cx', '20.48')
+                .attr('cy', '20.48')
+                .attr('fill-opacity', '0');
+            //.attr('fill', 'red')
+
+            backButton.on("click", undo);
+
+            function undo() {
+                if(ng.clickedNodes.length > 0){
+                    //Remove last added nodes from visualisation.
+                    let n = ng.numNodesAdded.pop();
+                    while(n--) ng.graphData.nodes.pop();
+
+                    //Remove links.
+                    n = ng.numLinksAdded.pop();
+                    while(n--) ng.graphData.links.pop();
+
+                    //Decrement clicked counter for lastClicked node.
+                    let i = ng.clickedNodes.pop();
+                    ng.graphData.nodes.find(a => a.id === i).clicks--;
+
+                    //update simulation.
+                    ng.update();
+                }
+            }
+
+            // Reset button.
+            let resetButton = this.svg.append('g')
+                .attr('transform', 'scale(0.04) translate(0, 1044)');
+
+            resetButton.append('path')
+                //.attr('transform', 'scale(0.85) translate(153.6, 153.6)')
+                .attr('d', 'M146.358 714 C219.143 847.474 360.001 934 517 934 c212.963 0 391.858 -158.66 418.579 -367.974 c3.077 -24.104 25.112 -41.15 49.217 -38.074 c24.105 3.078 41.152 25.113 38.074 49.218 C990.558 830.286 774.393 1022 517 1022 c-173.766 0 -331.173 -87.715 -424 -226.4 V911 c0 24.3 -19.7 44 -44 44 S5 935.3 5 911 V670 c0 -24.3 19.7 -44 44 -44 h241 c24.3 0 44 19.7 44 44 s-19.7 44 -44 44 H146.358z m736.284 -404 C809.857 176.526 668.999 90 512 90 C299.037 90 120.142 248.66 93.421 457.974 c-3.077 24.104 -25.112 41.15 -49.217 38.074 C20.099 492.97 3.052 470.935 6.13 446.83 C38.442 193.714 254.607 2 512 2 c173.766 0 331.173 87.715 424 226.4 V113 c0 -24.3 19.7 -44 44 -44 s44 19.7 44 44 v241 c0 24.3 -19.7 44 -44 44 H739 c-24.3 0 -44 -19.7 -44 -44 s19.7 -44 44 -44 h143.642z')
+                .attr('fill', 'black');
+            resetButton.append('circle')
+                .attr("r", '512')
+                .attr('cx', '512')
+                .attr('cy', '512')
+                .attr('fill-opacity', '0')
+                .attr('fill', 'red');
+
+            resetButton.on("click", reset);
+
+            function reset() {
+                // Clear all nodes and links.
+                ng.graphData.nodes = [];
+                ng.graphData.links = [];
+
+                //CLear undo feature arrays.
+                ng.numNodesAdded = [];
+                ng.numLinksAdded = [];
+                ng.clickedNodes = [];
+
+                // Add initial nodes.
+                ng.addFirstNode();
+
+                //update simulation.
+                ng.update();
+            }
         },
         update() {
             // Reference to NetworkGraph.vue component context.
@@ -186,7 +258,7 @@ export default {
             if (d.type === 'tune') {
                 return d.y - this.tune_radius - this.label_spacing;
             } else {
-                return  d.y - this.pattern_radius - this.label_spacing;
+                return d.y - this.pattern_radius - this.label_spacing;
             }
         },
         tick() {
@@ -233,17 +305,17 @@ export default {
 
             axios.get(process.env.VUE_APP_SERVER_URL + endpoint, { params })
                 .then(response => {
-                    let temp = response.data.results.bindings;
-                    let num = temp.length;
+                    let neighbours = response.data.results.bindings;
+                    let num = neighbours.length;
                     let node_is_new = [];
                     let num_new = num;
-                    let tempId;
+                    let neighboursId;
 
-                    for (let t in temp) {
+                    for (let t in neighbours) {
                         node_is_new[t] = true;
-                        tempId = temp[t].id.value;
+                        neighboursId = neighbours[t].id.value;
                         for (let n in this.graphData.nodes) {
-                            if (this.graphData.nodes[n].id === tempId) {
+                            if (this.graphData.nodes[n].id === neighboursId) {
                                 node_is_new[t] = false;
                                 num_new--;
                             }
@@ -256,13 +328,24 @@ export default {
                         return;
                     }
 
-                    for (let t in temp){
+                    // Add elements to arrays for undo feature.
+                    this.clickedNodes.push(clickedNode.id);
+                    this.numNodesAdded.push(num_new);
+
+                    for (let t in neighbours){
                         if(node_is_new[t]) {
+                            let family;
+                            if ("family" in neighbours[t] && neighbours[t].family.value){
+                                family = neighbours[t].family.value.replaceAll("_"," ");
+                            } else {
+                                family = "Unknown";
+                            }
+
                             let newNode = {
-                                id: temp[t].id.value,
-                                name: temp[t].title.value,
-                                family: temp[t].family.value.split("/").pop().replaceAll("_"," "),
-                                colour: this.selectColour(temp[t].family.value),
+                                id: neighbours[t].id.value,
+                                name: neighbours[t].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + neighbours[t].id.value + ")",
+                                family: family,
+                                colour: this.selectColour(family),
                                 type: "tune",
                                 moreNeighbours: true,
                                 clicks: 0,
@@ -273,7 +356,7 @@ export default {
                             this.graphData.nodes.push(newNode);
                         }
                     }
-                    this.getLinks(clickedNode, temp);
+                    this.getLinks(clickedNode, neighbours);
                     this.update();
                 })
                 .catch(error => {
@@ -281,6 +364,8 @@ export default {
                 });
         },
         getLinks(clicked, nodes){
+            let counter = 0;
+
             for(let n in nodes){
                 let tgt = nodes[n].id.value;
                 let newLinkId = [clicked.id, tgt].sort().join("");
@@ -295,8 +380,12 @@ export default {
 
                 if(new_link) {
                     this.graphData.links.push({ 'source': clicked.id, 'target': tgt, 'id': newLinkId});
+                    counter++;
                 }
             }
+
+            // Add element to array for undo feature.
+            this.numLinksAdded.push(counter);
         },
         selectColour(family){
             let nodeColour;
@@ -308,27 +397,36 @@ export default {
                 this.colourDict[family] = nodeColour;
             }
             return nodeColour;
+        },
+        addFirstNode(){
+            let family;
+            if ("tuneFamily" in this.tuneData[0] && this.tuneData[0].tuneFamily.value){
+                family = this.tuneData[0].tuneFamily.value.replaceAll("_"," ");
+            } else {
+                family = "Unknown";
+            }
+
+            let colour = this.selectColour(family);
+
+            let FirstNode = {
+                id: this.id,
+                name: this.tuneData[0].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.id + ")",
+                family: family,
+                colour: colour,
+                type: "tune",
+                moreNeighbours: true,
+                clicks: 0
+            };
+
+            this.graphData.nodes.push(FirstNode);
+
+            //On page load, download the neighbouring pattern nodes data
+            this.addNode(FirstNode, this);
         }
     },
     mounted () {
         this.init();
-
-        let colour = this.selectColour(this.tuneData[0].tuneFamily.value);
-
-        let FirstNode = {
-            id: this.id,
-            name: this.tuneData[0].title.value,
-            family: this.tuneData[0].tuneFamily.value.split("/").pop().replaceAll("_"," "),
-            colour: colour,
-            type: "tune",
-            moreNeighbours: true,
-            clicks: 0
-        };
-
-        this.graphData.nodes.push(FirstNode);
-
-        //On page load, download the neighbouring pattern nodes data
-        this.addNode(FirstNode, this);
+        this.addFirstNode();
     },
     watch: {
         //FIXME: What navigating to the pattern page, this watch triggers unnecessary function calls.

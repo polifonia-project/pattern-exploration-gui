@@ -1,29 +1,37 @@
 <template>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row mb-5">
             <div class="row">
-            <h1>Title: {{title}}</h1>
+            <h1>Title: {{title.replace(/^(.*?)(?:, The)$/, "The $1")}}</h1>
             </div>
             <div class="row">
-                <div class="col-12" @click="toTuneFamilyPage(this.tuneFamily)">
+                <div class="col-12">
+                    Tune ID: {{id}}
+                </div>
+            </div>
+            <div class="row">
+                <div v-if="this.tuneFamily !== 'Unknown'" class="col-12" @click="toTuneFamilyPage(this.tuneFamily)">
                     Tune Family: {{tuneFamily.replaceAll("_"," ")}}
+                </div>
+                <div v-if="this.link" class="col-12">
+                    <a v-bind:href="link">More Information</a>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-3 col-md-6">
+        <div class="row px-1">
+            <div class="col-lg-2 col-md-6 px-4">
                 <div class="row">
-                    <h5>Patterns in {{title}}</h5>
+                    <h5>Patterns in {{id}}</h5>
                     <table v-if="ptnData.length > 0" class="table table-hover mt-3">
                         <thead>
                             <tr>
                                 <th>Pattern</th>
-                                <th>Occurrences</th>
+                                <th>#</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(tune, index) in ptnData" :key="index" @click="toPatternPage(tune.pattern.value)">
-                                <td>{{ tune.pattern.value.split("/").pop() }}</td>
+                                <td>{{ tune.pattern.value }}</td>
                                 <td>{{ tune.patternFreq.value}}</td>
                             </tr>
                         </tbody>
@@ -36,7 +44,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6" v-if="prev">
+            <div class="col-lg-2 col-md-6 px-4" v-if="prev">
                 <div class="row">
                     <h5>Patterns in common with {{prev}}</h5>
                     <table v-if="cmnPtnData.length > 0" class="table table-hover mt-3">
@@ -47,7 +55,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(tune, index) in cmnPtnData" :key="index" @click="toPatternPage(tune.pattern.value)">
-                                <td>{{ tune.pattern.value.split("/").pop() }}</td>
+                                <td>{{ tune.pattern.value }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -56,26 +64,26 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-8 col-md-12 px-4">
                 <nav>
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Exploration</button>
-                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Common Patterns Similarity</button>
-                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Van Kranenburg Similarity</button>
+                    <div class="nav nav-tabs flex-column flex-sm-row" id="nav-tab" role="tablist">
+                        <button class="flex-sm-fill text-sm-center nav-link active" id="nav-explore-tab" data-bs-toggle="tab" data-bs-target="#nav-explore" type="button" role="tab" aria-controls="nav-explore" aria-selected="false">Tunes and Patterns</button>
+                        <button class="flex-sm-fill text-sm-center nav-link" id="nav-common-patterns-tab" data-bs-toggle="tab" data-bs-target="#nav-common-patterns" type="button" role="tab" aria-controls="nav-common-patterns" aria-selected="false">Tune Similarity</button>
+                        <!-- button class="flex-sm-fill text-sm-center nav-link" id="nav-van-kranenburg-tab" data-bs-toggle="tab" data-bs-target="#nav-van-kranenburg" type="button" role="tab" aria-controls="nav-van-kranenburg" aria-selected="false">Van Kranenburg Similarity</button -->
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="tab-pane fade show active" id="nav-explore" role="tabpanel" aria-labelledby="nav-explore-tab">
                         <template v-if="childDataLoaded">
                             <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
                         </template>
                     </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                    <div class="tab-pane fade" id="nav-common-patterns" role="tabpanel" aria-labelledby="nav-common-patterns-tab">
                         <template v-if="childDataLoaded">
                             <NetworkGraphCommonPatterns v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
                         </template>
                     </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">placeholder</div>
+                    <!-- div class="tab-pane fade" id="nav-van-kranenburg" role="tabpanel" aria-labelledby="nav-van-kranenburg-tab">placeholder</div -->
                 </div>
             </div>
         </div>
@@ -97,6 +105,7 @@
                 tuneData: [],
                 title: "",
                 tuneFamily: "",
+                link: "",
                 exclude_trivial_patterns: true,
                 id: this.$route.params.id,
                 prev: this.$route.params.prev,
@@ -116,7 +125,8 @@
                         this.tuneData = response.data.results.bindings;
                         this.childDataLoaded = true;
                         this.title = this.tuneData[0].title.value;
-                        this.tuneFamily = this.tuneData[0].tuneFamily.value.split("/").pop();
+                        this.tuneFamily = "tuneFamily" in this.tuneData[0] && this.tuneData[0].tuneFamily.value ? this.tuneData[0].tuneFamily.value: 'Unknown';
+                        this.link = "link" in this.tuneData[0] ? this.tuneData[0].link.value : "Undefined";
                     })
                     .catch(error => {
                         console.error(error);

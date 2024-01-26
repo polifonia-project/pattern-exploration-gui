@@ -23,30 +23,44 @@
                     <div class="mb-3 row">
                         <label for="item_corpus" class="col-sm-2 col-form-label">Corpus</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_corpus" v-model="corpus" :options="corpusOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
+                            <Multiselect id="item_corpus" v-model="corpus" :options="corpusOptions" mode="tags" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_key" class="col-sm-2 col-form-label">Key</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_key" v-model="key" :options="keyOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
+                            <Multiselect id="item_key" v-model="key" :options="keyOptions" mode="tags" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_time_signature" class="col-sm-2 col-form-label">Time Signature</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_time_signature" v-model="timeSignature" :options="timeSignatureOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
+                            <Multiselect id="item_time_signature" v-model="timeSignature" :options="timeSignatureOptions" mode="tags" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_tune_type" class="col-sm-2 col-form-label">Tune Type</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_tune_type" v-model="tuneType" :options="tuneTypeOptions" mode="multiple" :close-on-select="false" @keydown.enter="search"/>
+                            <Multiselect id="item_tune_type" v-model="tuneType" :options="tuneTypeOptions" mode="tags" :close-on-select="false" @keydown.enter="search"/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-2 col-xs-4">
+            <div class="col-4 col-xs-4">
+                <div class="row p-0">
+                    <div class="col-md-6 col-xs-12">
+                        <button type="button" class="btn btn-primary" @click="search()">Search</button>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <select class="form-select" v-model="searchType">
+                            <option value="title">Title</option>
+                            <option value="pattern">Pattern</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!--div class="col-2 col-xs-4">
                 <div>
                     <button type="button" class="btn btn-primary" @click="search()">Search</button>
                 </div>
@@ -57,7 +71,7 @@
                     <option value="pattern">Pattern</option>
                     <option value="advanced">Advanced</option>
                 </select>
-            </div>
+            </div -->
         </div>
         <div class="row">
             <!-- Display the search results in a table -->
@@ -73,11 +87,11 @@
                 </thead>
                 <tbody>
                     <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id.value)">
-                        <td>{{ tune.tune_name.value }}</td>
+                        <td>{{ tune.tune_name.value ? tune.tune_name.value.replace(/^(.*?)(?:, The)$/, "The $1") : "Unknown"}}</td>
                         <td>{{ tune.id.value }}</td>
-                        <td>{{ tune.tuneType.value.split("/").pop() ? tune.tuneType.value: 'Unknown' }}</td>
-                        <td>{{ tune.key.value.split("/").pop() ? tune.key.value : 'Unknown' }}</td>
-                        <td>{{ tune.signature.value.split("/").pop() ? tune.signature.value : 'Unknown' }}</td>
+                        <td>{{ "tuneType" in tune && tune.tuneType.value ? tune.tuneType.value: 'Unknown' }}</td>
+                        <td>{{ "key" in tune && tune.key.value ? tune.key.value.replace(/^(.)(.*)$/, "$1 $2") : 'Unknown' }}</td>
+                        <td>{{ "signature" in tune && tune.signature.value ? tune.signature.value : 'Unknown' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -125,7 +139,7 @@ export default {
                     pattern: this.pattern,
                     title: this.title,
                     corpus: JSON.parse(JSON.stringify(this.corpus)),
-                    key: JSON.parse(JSON.stringify(this.key)),
+                    key: JSON.parse(JSON.stringify(this.key.map((a) => {return a === "Unknown" ? "" : a.replace(/^(.)\s(.*)$/, "$1$2") }))),
                     timeSignature: JSON.parse(JSON.stringify(this.timeSignature)),
                     tuneType: JSON.parse(JSON.stringify(this.tuneType)),
                 };
@@ -146,10 +160,10 @@ export default {
                 if (this.ValidPattern(params)) {
                     // Replace separators with underscores.
                     if (params.searchType === "pattern"){
-                        params.searchTerm = this.searchTerm.replaceAll(/[, -]/g, '_')
+                        params.searchTerm = this.searchTerm.replaceAll(/[_, -]\s*/g, ', ')
                     }
                     else if(params.searchType === "advanced"){
-                        params.pattern = this.pattern.replaceAll(/[, -]/g, '_')
+                        params.pattern = this.pattern.replaceAll(/[_, -]/g, ', ')
                     }
 
                     // Change url
@@ -162,8 +176,6 @@ export default {
             }
         },
         ValidPattern(params){
-            // Method has side effects: sets this.valid_pattern value.
-            // Bad code?
             if (params.searchType === "pattern"){
                 this.valid_pattern = this.pattern_validation(params.searchTerm);
             }
@@ -196,61 +208,61 @@ export default {
             this.$router.push({ name: 'CompositionPage', params: { id: id}});
         },
         pattern_validation(ptn){
-            let regex = /^[0-9]([_ ,-][0-9]){3,}$/;
+            let regex = /^[0-9](?:(?:,\s|[_ ,-])[0-9]){3,}$/;
             return regex.test(ptn);
         },
         getCorpusList() {
-            let corpuses_list = JSON.parse(localStorage.getItem('corpus'));
+            let corpuses_list = JSON.parse(sessionStorage.getItem('corpus'));
             if (corpuses_list) {
                 this.corpusOptions = corpuses_list;
             } else {
                 //Download list of corpuses.
                 axios.get(process.env.VUE_APP_SERVER_URL + `/api/corpus_list`)
                     .then(response => {
-                        this.corpusOptions = response.data;
-                        localStorage.setItem('corpus', JSON.stringify(this.corpusOptions));
+                        this.corpusOptions = response.data.map((a) => {return a ? a : 'Unknown'});
+                        sessionStorage.setItem('corpus', JSON.stringify(this.corpusOptions));
                     })
                     .catch(() => {});
             }
         },
         getKeyList() {
-            let keys_list = JSON.parse(localStorage.getItem('key'));
+            let keys_list = JSON.parse(sessionStorage.getItem('key'));
             if (keys_list) {
                 this.keyOptions = keys_list;
             } else {
                 //Download list of key.
                 axios.get(process.env.VUE_APP_SERVER_URL + `/api/keys_list`)
                     .then(response => {
-                        this.keyOptions = response.data;
-                        localStorage.setItem('key', JSON.stringify(this.keyOptions));
+                        this.keyOptions = response.data.map((a) => {return a ? a.replace(/^(.)(.*)$/, "$1 $2") : 'Unknown'});
+                        sessionStorage.setItem('key', JSON.stringify(this.keyOptions));
                     })
                     .catch(() => {});
             }
         },
         getTimeSigList() {
-            let time_sig_list = JSON.parse(localStorage.getItem('timeSignature'));
+            let time_sig_list = JSON.parse(sessionStorage.getItem('timeSignature'));
             if (time_sig_list) {
                 this.timeSignatureOptions = time_sig_list;
             } else {
                 //Download list of time signatures.
                 axios.get(process.env.VUE_APP_SERVER_URL + `/api/time_sig_list`)
                     .then(response => {
-                        this.timeSignatureOptions = response.data;
-                        localStorage.setItem('timeSignature', JSON.stringify(this.timeSignatureOptions));
+                        this.timeSignatureOptions = response.data.map((a) => {return a ? a : 'Unknown'});
+                        sessionStorage.setItem('timeSignature', JSON.stringify(this.timeSignatureOptions));
                     })
                     .catch(() => {});
             }
         },
         getTuneTypeList() {
-            let tune_type_list = JSON.parse(localStorage.getItem('tuneType'));
+            let tune_type_list = JSON.parse(sessionStorage.getItem('tuneType'));
             if (tune_type_list) {
                 this.tuneTypeOptions = tune_type_list;
             } else {
                 //Download list of tune types.
                 axios.get(process.env.VUE_APP_SERVER_URL + `/api/tune_type_list`)
                     .then(response => {
-                        this.tuneTypeOptions = response.data;
-                        localStorage.setItem('tuneType', JSON.stringify(this.tuneTypeOptions));
+                        this.tuneTypeOptions = response.data.map((a) => {return a ? a : 'Unknown'});
+                        sessionStorage.setItem('tuneType', JSON.stringify(this.tuneTypeOptions));
                     })
                     .catch(() => {});
             }

@@ -75,12 +75,12 @@ export default {
                 6: "b"
             };
             let abc_string = 'X:1\n' +
-                'T:Blah\n' +
+                'T:\n' +
                 'M:C\n' +
                 'K:C\n' +
                 'Q: 1/4=100\n';
 
-            let pattern_list = this.pattern.split('_');
+            let pattern_list = this.pattern.split(', ');
             for(let n in pattern_list){
                 abc_string += diatonic_dict[(pattern_list[n] - 1)%7] + " ";
             }
