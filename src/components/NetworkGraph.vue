@@ -54,6 +54,18 @@ export default {
         }
     },
     methods: {
+        formatID(id){
+            let prefix = "";
+            if(id.includes("thesession")){
+                prefix = "S";
+            } else if (id.includes("MTC")) {
+                prefix = "M";
+            } else {
+                prefix = id.split('/')[0].substring(0, 3).toUpperCase();
+            }
+
+            return prefix + id.split('/').pop();
+        },
         init(){
             // Reference to NetworkGraph.vue component context.
             let ng=this;
@@ -366,7 +378,7 @@ export default {
                                 }
 
                                 newID = neighbours[t].id.value;
-                                newName = neighbours[t].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + neighbours[t].id.value + ")";
+                                newName = neighbours[t].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(neighbours[t].id.value) + ")";
                                 newFamily = family;
                                 newColour = this.selectColour(family);
                                 newType = "tune";
@@ -447,7 +459,7 @@ export default {
 
             let FirstNode = {
                 id: this.id,
-                name: this.tuneData[0].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.id + ")",
+                name: this.tuneData[0].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(this.id) + ")",
                 family: family,
                 colour: colour,
                 type: "tune",

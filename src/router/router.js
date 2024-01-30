@@ -3,6 +3,7 @@ import Home from '../components/HomeSearchPage.vue'
 import Composition from '../components/CompositionPage.vue'
 import Pattern from '../components/PatternPage.vue'
 import TuneFamily from '../components/TuneFamilyPage.vue'
+import AboutPage from '../components/AboutPage.vue'
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
     name: 'TuneFamilyPage',
     component: TuneFamily,
     props: true
+  },
+  {
+    path: '/about',
+    name: 'AboutPage',
+    component: AboutPage,
+    props: false
   },
 ]
 

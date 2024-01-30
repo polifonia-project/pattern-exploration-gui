@@ -88,7 +88,7 @@
                 <tbody>
                     <tr v-for="(tune, index) in searchResults" :key="index" @click="openDetails(tune.id.value)">
                         <td>{{ tune.tune_name.value ? tune.tune_name.value.replace(/^(.*?)(?:, The)$/, "The $1") : "Unknown"}}</td>
-                        <td>{{ tune.id.value }}</td>
+                        <td>{{ this.formatID(tune.id.value) }}</td>
                         <td>{{ "tuneType" in tune && tune.tuneType.value ? tune.tuneType.value: 'Unknown' }}</td>
                         <td>{{ "key" in tune && tune.key.value ? tune.key.value.replace(/^(.)(.*)$/, "$1 $2") : 'Unknown' }}</td>
                         <td>{{ "signature" in tune && tune.signature.value ? tune.signature.value : 'Unknown' }}</td>
@@ -131,6 +131,18 @@ export default {
         };
     },
     methods: {
+        formatID(id){
+            let prefix = "";
+            if(id.includes("thesession")){
+                prefix = "S";
+            } else if (id.includes("MTC")) {
+                prefix = "M";
+            } else {
+                prefix = id.split('/')[0].substring(0, 3).toUpperCase();
+            }
+
+            return prefix + id.split('/').pop();
+        },
         search() {
             let params = {};
             if (this.advanced_search) {
@@ -298,4 +310,13 @@ export default {
 }
 </script>
 
-<style src="@vueform/multiselect/themes/default.css"></style>
+<style src="@vueform/multiselect/themes/default.css">
+</style>
+
+<style scoped>
+    .btn-primary{
+        background-image: linear-gradient(120deg, #6400B5, #FF0000);
+        //border-color: #6400B5;
+        border-color: white;
+    }
+</style>

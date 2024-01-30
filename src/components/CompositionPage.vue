@@ -6,7 +6,7 @@
             </div>
             <div class="row">
                 <div class="col-12">
-                    Tune ID: {{id}}
+                    Tune ID: {{this.formatID(id)}}
                 </div>
             </div>
             <div class="row">
@@ -18,10 +18,10 @@
                 </div>
             </div>
         </div>
-        <div class="row px-1">
+        <div class="row px-1 py-2">
             <div class="col-lg-2 col-md-6 px-4">
                 <div class="row">
-                    <h5>Patterns in {{id}}</h5>
+                    <h5>Patterns in {{this.formatID(id)}}</h5>
                     <table v-if="ptnData.length > 0" class="table table-hover mt-3">
                         <thead>
                             <tr>
@@ -46,7 +46,7 @@
             </div>
             <div class="col-lg-2 col-md-6 px-4" v-if="prev">
                 <div class="row">
-                    <h5>Patterns in common with {{prev}}</h5>
+                    <h5>Patterns in common with {{this.formatID(prev)}}</h5>
                     <table v-if="cmnPtnData.length > 0" class="table table-hover mt-3">
                         <thead>
                             <tr>
@@ -113,6 +113,18 @@
             }
         },
         methods: {
+            formatID(id){
+                let prefix = "";
+                if(id.includes("thesession")){
+                    prefix = "S";
+                } else if (id.includes("MTC")) {
+                    prefix = "M";
+                } else {
+                    prefix = id.split('/')[0].substring(0, 3).toUpperCase();
+                }
+
+                return prefix + id.split('/').pop();
+            },
             toTuneFamilyPage(fam){
                 this.$router.push({ name: 'TuneFamilyPage', params: { fam: fam}});
             },
