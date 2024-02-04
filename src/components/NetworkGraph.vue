@@ -1,47 +1,41 @@
 <template>
     <svg id="svg1" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12">
         <defs>
-            <defs>
-                <radialGradient id="black">
-                    <stop offset="0%" stop-color="#333333" />
-                    <stop offset="100%" stop-color="#000000" />
-                </radialGradient>
-                <radialGradient id="orange">
-                    <stop offset="0%" stop-color="#E69F00" />
-                    <stop offset="100%" stop-color="#b87f00" />
-                </radialGradient>
-                <radialGradient id="sky_blue">
-                    <stop offset="0%" stop-color="#56B4E9" />
-                    <stop offset="100%" stop-color="#1e9be2" />
-                </radialGradient>
-                <radialGradient id="bluish_green">
-                    <stop offset="0%" stop-color="#009E73" />
-                    <stop offset="100%" stop-color="#007e5c" />
-                </radialGradient>
-                <radialGradient id="yellow">
-                    <stop offset="0%" stop-color="#F0E442" />
-                    <stop offset="100%" stop-color="#e3d412" />
-                </radialGradient>
-                <radialGradient id="blue">
-                    <stop offset="0%" stop-color="#0072B2" />
-                    <stop offset="100%" stop-color="#005b8e" />
-                </radialGradient>
-                <radialGradient id="vermilion">
-                    <stop offset="0%" stop-color="#D55E00" />
-                    <stop offset="100%" stop-color="#aa4b00" />
-                </radialGradient>
-                <radialGradient id="reddish_purple">
-                    <stop offset="0%" stop-color="#CC79A7" />
-                    <stop offset="100%" stop-color="#ba4a88" />
-                </radialGradient>
-                <filter id="shadow" x="0" y="0" width="200%" height="200%">
-                    <feOffset result="offOut" in="SourceAlpha" dx="10" dy="10" />
-                    <feColorMatrix result="matrixOut" in="offOut" type="matrix"
-                                   values="0.2 0 0 0 0 0 0.2 0 0 0 0 0 0.2 0 0 0 0 0 1 0" />
-                    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="5" />
-                    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-                </filter>
-            </defs>
+            <radialGradient id="black" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#cccccc" />
+                <stop offset="100%" stop-color="#000000" />
+            </radialGradient>
+            <radialGradient id="orange" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ffeec7" />
+                <stop offset="100%" stop-color="#E69F00" />
+            </radialGradient>
+            <radialGradient id="sky_blue" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ddf0fb" />
+                <stop offset="100%" stop-color="#56B4E9" />
+            </radialGradient>
+            <radialGradient id="bluish_green" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#b9ffec" />
+                <stop offset="100%" stop-color="#009E73" />
+            </radialGradient>
+            <radialGradient id="yellow" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#fcfad9" />
+                <stop offset="100%" stop-color="#F0E442" />
+            </radialGradient>
+            <radialGradient id="blue" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#bde7ff" />
+                <stop offset="100%" stop-color="#0072B2" />
+            </radialGradient>
+            <radialGradient id="vermilion" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ffdec4" />
+                <stop offset="100%" stop-color="#D55E00" />
+            </radialGradient>
+            <radialGradient id="reddish_purple" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="1%">
+                <stop offset="0%" stop-color="#f5e4ed" />
+                <stop offset="100%" stop-color="#CC79A7" />
+            </radialGradient>
+            <filter id="shadow" filterUnits="objectBoundingBox" x="-10%" y="-10%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                <feDropShadow dx="40%" dy="40%" stdDeviation="3" flood-color="shadow" flood-opacity="0.5" />
+            </filter>
         </defs>
     </svg>
 </template>
@@ -143,7 +137,6 @@ export default {
                 .attr('cx', '20.48')
                 .attr('cy', '20.48')
                 .attr('fill-opacity', '0');
-                //.attr('fill', 'red')
 
             backButton.on("click", undo);
 

@@ -1,5 +1,43 @@
 <template>
-    <svg id="svg2" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12"></svg>
+    <svg id="svg2" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12">
+        <defs>
+            <radialGradient id="black" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#cccccc" />
+                <stop offset="100%" stop-color="#000000" />
+            </radialGradient>
+            <radialGradient id="orange" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ffeec7" />
+                <stop offset="100%" stop-color="#E69F00" />
+            </radialGradient>
+            <radialGradient id="sky_blue" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ddf0fb" />
+                <stop offset="100%" stop-color="#56B4E9" />
+            </radialGradient>
+            <radialGradient id="bluish_green" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#b9ffec" />
+                <stop offset="100%" stop-color="#009E73" />
+            </radialGradient>
+            <radialGradient id="yellow" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#fcfad9" />
+                <stop offset="100%" stop-color="#F0E442" />
+            </radialGradient>
+            <radialGradient id="blue" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#bde7ff" />
+                <stop offset="100%" stop-color="#0072B2" />
+            </radialGradient>
+            <radialGradient id="vermilion" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
+                <stop offset="0%" stop-color="#ffdec4" />
+                <stop offset="100%" stop-color="#D55E00" />
+            </radialGradient>
+            <radialGradient id="reddish_purple" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="1%">
+                <stop offset="0%" stop-color="#f5e4ed" />
+                <stop offset="100%" stop-color="#CC79A7" />
+            </radialGradient>
+            <filter id="shadow" filterUnits="objectBoundingBox" x="-10%" y="-10%" width="300%" height="300%" color-interpolation-filters="sRGB">
+                <feDropShadow dx="40%" dy="40%" stdDeviation="3" flood-color="shadow" flood-opacity="0.5" />
+            </filter>
+        </defs>
+    </svg>
 </template>
 
 <script>
@@ -176,7 +214,8 @@ export default {
                 .attr("class", "node")
                 .attr("r", nodeRadius)
                 .attr('stroke-width', 3)
-                .attr('fill', d => d.colour)
+                .attr('fill', d=>{return "url(#" + d.colour + ")"})
+                .attr('filter', "url(#shadow)")
                 .call(this.drag(this.simulation));
 
             this.node = nodeEnter.merge(this.node);
@@ -194,7 +233,7 @@ export default {
                 .attr("x", d => d.x)
                 .attr("y", this.labelLocation)
                 .style("text-anchor", "middle")
-                .style("fill", this.colours.black)
+                .style("fill", "black")
                 .style("font-family", "Arial")
                 .style("font-size", this.label_size)
                 .style("pointer-events", "none");
@@ -405,7 +444,7 @@ export default {
                 nodeColour = this.colourDict[family];
             } else {
                 this.currentColour = (this.currentColour + 1)%7;
-                nodeColour = this.colours[this.colourList[this.currentColour]];
+                nodeColour = this.colourList[this.currentColour];
                 this.colourDict[family] = nodeColour;
             }
             return nodeColour;
