@@ -99,7 +99,7 @@ export default {
             if(refStyle === "APA"){
                 this.citation = "Polifonia Project. ("+modDate+"). " +
                     title + " (" +
-                    kg_version + ")." +
+                    kg_version + "). " +
                     url;
             } else if (refStyle === "MLA") {
                 this.citation = "Polifonia Project. \"" +
