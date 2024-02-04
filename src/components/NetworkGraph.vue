@@ -1,5 +1,49 @@
 <template>
-    <svg id="svg1" width="100%" height="auto" style="border:1px solid black" viewBox="0 0 1000 700" class="container-border col-lg-12"></svg>
+    <svg id="svg1" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12">
+        <defs>
+            <defs>
+                <radialGradient id="black">
+                    <stop offset="0%" stop-color="#333333" />
+                    <stop offset="100%" stop-color="#000000" />
+                </radialGradient>
+                <radialGradient id="orange">
+                    <stop offset="0%" stop-color="#E69F00" />
+                    <stop offset="100%" stop-color="#b87f00" />
+                </radialGradient>
+                <radialGradient id="sky_blue">
+                    <stop offset="0%" stop-color="#56B4E9" />
+                    <stop offset="100%" stop-color="#1e9be2" />
+                </radialGradient>
+                <radialGradient id="bluish_green">
+                    <stop offset="0%" stop-color="#009E73" />
+                    <stop offset="100%" stop-color="#007e5c" />
+                </radialGradient>
+                <radialGradient id="yellow">
+                    <stop offset="0%" stop-color="#F0E442" />
+                    <stop offset="100%" stop-color="#e3d412" />
+                </radialGradient>
+                <radialGradient id="blue">
+                    <stop offset="0%" stop-color="#0072B2" />
+                    <stop offset="100%" stop-color="#005b8e" />
+                </radialGradient>
+                <radialGradient id="vermilion">
+                    <stop offset="0%" stop-color="#D55E00" />
+                    <stop offset="100%" stop-color="#aa4b00" />
+                </radialGradient>
+                <radialGradient id="reddish_purple">
+                    <stop offset="0%" stop-color="#CC79A7" />
+                    <stop offset="100%" stop-color="#ba4a88" />
+                </radialGradient>
+                <filter id="shadow" x="0" y="0" width="200%" height="200%">
+                    <feOffset result="offOut" in="SourceAlpha" dx="10" dy="10" />
+                    <feColorMatrix result="matrixOut" in="offOut" type="matrix"
+                                   values="0.2 0 0 0 0 0 0.2 0 0 0 0 0 0.2 0 0 0 0 0 1 0" />
+                    <feGaussianBlur result="blurOut" in="offOut" stdDeviation="5" />
+                    <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+                </filter>
+            </defs>
+        </defs>
+    </svg>
 </template>
 
 <script>
@@ -177,7 +221,8 @@ export default {
                 .attr("class", "node")
                 .attr("r", nodeRadius)
                 .attr('stroke-width', 3)
-                .attr('fill', d => d.colour)
+                .attr('fill', d=>{return "url(#" + d.colour + ")"})
+                .attr('filter', "url(#shadow)")
                 .call(this.drag(this.simulation));
 
             this.node = nodeEnter.merge(this.node);
@@ -195,7 +240,8 @@ export default {
                 .attr("x", d => d.x)
                 .attr("y", this.labelLocation)
                 .style("text-anchor", "middle")
-                .style("fill", this.colours.black)
+                //.style("fill", this.colours.black)
+                .style("fill", "black")
                 .style("font-family", "Arial")
                 .style("font-size", this.label_size)
                 .style("pointer-events", "none");
@@ -240,7 +286,7 @@ export default {
                 clearTimeout(timeout);
 
                 if(clickedNode.type === "tune"){
-                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id}});
+                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id, prevTitle: ng.tuneData[0].title.value}});
                 } else if (clickedNode.type === "pattern") {
                     ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});
                 } else {
@@ -367,7 +413,8 @@ export default {
                                 newID = neighbours[t].pattern.value;
                                 newName = neighbours[t].pattern.value;
                                 newFamily = neighbours[t].pattern.value.replaceAll("_"," ");
-                                newColour = this.colours.black;
+                                //newColour = this.colours.black;
+                                newColour = "black";
                                 newType = "pattern";
                             } else {
                                 let family;
@@ -378,7 +425,8 @@ export default {
                                 }
 
                                 newID = neighbours[t].id.value;
-                                newName = neighbours[t].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(neighbours[t].id.value) + ")";
+                                //newName = neighbours[t].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(neighbours[t].id.value) + ")";
+                                newName = this.formatTitle(neighbours[t].title.value, neighbours[t].id.value);
                                 newFamily = family;
                                 newColour = this.selectColour(family);
                                 newType = "tune";
@@ -442,10 +490,14 @@ export default {
                 nodeColour = this.colourDict[family];
             } else {
                 this.currentColour = (this.currentColour + 1)%7;
-                nodeColour = this.colours[this.colourList[this.currentColour]];
+                //nodeColour = this.colours[this.colourList[this.currentColour]];
+                nodeColour = this.colourList[this.currentColour];
                 this.colourDict[family] = nodeColour;
             }
             return nodeColour;
+        },
+        formatTitle(title, id){
+            return title.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(id) + ")";
         },
         addFirstNode(){
             let family;
@@ -459,7 +511,8 @@ export default {
 
             let FirstNode = {
                 id: this.id,
-                name: this.tuneData[0].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(this.id) + ")",
+                //name: this.tuneData[0].title.value.replace(/^(.*?)(?:, The)$/, "The $1") + " (" + this.formatID(this.id) + ")",
+                name: this.formatTitle(this.tuneData[0].title.value, this.id),
                 family: family,
                 colour: colour,
                 type: "tune",

@@ -3,5 +3,6 @@ import App from './App.vue'
 import router from './router/router'
 import "bootstrap/dist/css/bootstrap.min.css";
 import bootstrap from "bootstrap/dist/js/bootstrap.js"
+import "@/assets/purple.css";
 
 createApp(App).use(router).use(bootstrap).mount('#app')

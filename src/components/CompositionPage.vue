@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row mb-5">
             <div class="row">
-            <h1>Title: {{title.replace(/^(.*?)(?:, The)$/, "The $1")}}</h1>
+            <h1>{{title.replace(/^(.*?)(?:, The)$/, "The $1")}}</h1>
             </div>
             <div class="row">
                 <div class="col-12">
@@ -10,18 +10,54 @@
                 </div>
             </div>
             <div class="row">
-                <div v-if="this.tuneFamily !== 'Unknown'" class="col-12" @click="toTuneFamilyPage(this.tuneFamily)">
-                    Tune Family: {{tuneFamily.replaceAll("_"," ")}}
+                <div v-if="this.tuneFamily !== 'Unknown'" class="col-12">
+                    <router-link class="nav-link p-0" :to="'/family/' + this.tuneFamily">Tune Family: {{tuneFamily.replaceAll("_"," ")}}</router-link>
                 </div>
                 <div v-if="this.link" class="col-12">
-                    <a v-bind:href="link">More Information</a>
+                    <a class="nav-link p-0" v-bind:href="link">More Information</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="citationWindow">
+                    <p class="d-inline-flex gap-1">
+                        <a @click="generateCitation('APA')" class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <img  class="bi" width="24" height="24" src="@/assets/cite.svg" alt=""> Cite
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group">
+                                        <input @click="generateCitation('APA')" type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" checked>
+                                        <label class="btn btn-outline-primary" for="vbtn-radio1">APA</label>
+                                        <input @click="generateCitation('MLA')" type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="vbtn-radio2">MLA</label>
+                                        <input @click="generateCitation('Harvard')" type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off">
+                                        <label class="btn btn-outline-primary" for="vbtn-radio3">Harvard</label>
+                                    </div>
+                                </div>
+                                <div class="col-8">
+                                    <div class="row">
+                                        <div class="mb-3">
+                                            <!-- textarea v-model="citation" class="form-control" id="citationTextArea" rows="3"></textarea -->
+                                            <p>{{citation}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <button class="btn btn-primary" @click="copyCiteToClipboard()">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row px-1 py-2">
-            <div class="col-lg-2 col-md-6 px-4">
+        <div class="row px-1 py-2 justify-content-center">
+            <div class="col-lg-2 col-md-6 px-4 mb-4">
                 <div class="row">
-                    <h5>Patterns in {{this.formatID(id)}}</h5>
+                    <h7>Patterns contained in "{{title.replace(/^(.*?)(?:, The)$/, "The $1")}}" ({{this.formatID(id)}})</h7>
                     <table v-if="ptnData.length > 0" class="table table-hover mt-3">
                         <thead>
                             <tr>
@@ -44,9 +80,9 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-2 col-md-6 px-4" v-if="prev">
+            <div class="col-lg-2 col-md-6 px-4 mb-4" v-if="prev">
                 <div class="row">
-                    <h5>Patterns in common with {{this.formatID(prev)}}</h5>
+                    <h7>Patterns in common between "{{title.replace(/^(.*?)(?:, The)$/, "The $1")}}" ({{this.formatID(id)}}) and "{{prevTitle.replace(/^(.*?)(?:, The)$/, "The $1")}}" ({{this.formatID(prev)}})</h7>
                     <table v-if="cmnPtnData.length > 0" class="table table-hover mt-3">
                         <thead>
                             <tr>
@@ -65,11 +101,31 @@
                 </div>
             </div>
             <div class="col-lg-8 col-md-12 px-4">
+                <div class="row px-3 mb-2">
+                    <div class="form-check form-switch">
+                        <input v-model="net_vis_show_pattterns" class="form-check-input" type="checkbox" id="item_net_vis_show_pattterns" checked>
+                        <label class="form-check-label" for="item_net_vis_show_pattterns">Show Pattern Nodes</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div v-if="net_vis_show_pattterns" id="nav-explore">
+                        <template v-if="childDataLoaded">
+                            <NetworkGraph v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
+                        </template>
+                    </div>
+                    <div v-else id="nav-common-patterns">
+                        <template v-if="childDataLoaded">
+                            <NetworkGraphCommonPatterns v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <!-- div class="col-lg-8 col-md-12 px-4">
                 <nav>
                     <div class="nav nav-tabs flex-column flex-sm-row" id="nav-tab" role="tablist">
                         <button class="flex-sm-fill text-sm-center nav-link active" id="nav-explore-tab" data-bs-toggle="tab" data-bs-target="#nav-explore" type="button" role="tab" aria-controls="nav-explore" aria-selected="false">Tunes and Patterns</button>
                         <button class="flex-sm-fill text-sm-center nav-link" id="nav-common-patterns-tab" data-bs-toggle="tab" data-bs-target="#nav-common-patterns" type="button" role="tab" aria-controls="nav-common-patterns" aria-selected="false">Tune Similarity</button>
-                        <!-- button class="flex-sm-fill text-sm-center nav-link" id="nav-van-kranenburg-tab" data-bs-toggle="tab" data-bs-target="#nav-van-kranenburg" type="button" role="tab" aria-controls="nav-van-kranenburg" aria-selected="false">Van Kranenburg Similarity</button -->
+                        <button class="flex-sm-fill text-sm-center nav-link" id="nav-van-kranenburg-tab" data-bs-toggle="tab" data-bs-target="#nav-van-kranenburg" type="button" role="tab" aria-controls="nav-van-kranenburg" aria-selected="false">Van Kranenburg Similarity</button>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -83,9 +139,10 @@
                             <NetworkGraphCommonPatterns v-bind:id="id" v-bind:tuneData="tuneData" v-bind:exclude_trivial_patterns="exclude_trivial_patterns" @changeComposition="changeTune"/>
                         </template>
                     </div>
-                    <!-- div class="tab-pane fade" id="nav-van-kranenburg" role="tabpanel" aria-labelledby="nav-van-kranenburg-tab">placeholder</div -->
+                    <div class="tab-pane fade" id="nav-van-kranenburg" role="tabpanel" aria-labelledby="nav-van-kranenburg-tab">placeholder</div>
                 </div>
-            </div>
+            </div -->
+
         </div>
     </div>
 </template>
@@ -98,6 +155,7 @@
     export default {
         name: 'CompositionPage',
         components: {NetworkGraph, NetworkGraphCommonPatterns},
+        //props: ['prevTitle'],
         data(){
             return{
                 ptnData: [],
@@ -109,10 +167,53 @@
                 exclude_trivial_patterns: true,
                 id: this.$route.params.id,
                 prev: this.$route.params.prev,
+                prevTitle: this.$route.params.prevTitle,
                 childDataLoaded: false,
+                citation: "",
+                net_vis_show_pattterns: true,
             }
         },
         methods: {
+            generateCitation(refStyle){
+                let url = new URL(location.href).href;
+                let title = this.title.replace(/^(.*?)(?:, The)$/, "The $1") +
+                    " (" + this.formatID(this.id) + ")";
+                let kg_version = JSON.parse(sessionStorage.getItem('kg_version'));
+                let date = new Date();
+                const options = {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                };
+                let currDate = date.toLocaleString('default', options);
+                //let mod_date = new Date(document.lastModified);
+                //let modDate = mod_date.toLocaleString('default', options);
+                let modDate = "2024";
+
+                if(refStyle === "APA"){
+                    this.citation = "Polifonia Project. ("+modDate+"). " +
+                        title + " (" +
+                        kg_version + ")." +
+                        url;
+                } else if (refStyle === "MLA") {
+                    this.citation = "Polifonia Project. \"" +
+                        title + ".\" " +
+                        "Polifonia Project, " +
+                        kg_version +
+                        ", "+modDate+", " +
+                        url.replace(/(^\w+:|^)\/\//, '');
+                } else if (refStyle === "Harvard") {
+                    this.citation = "Polifonia Project (2024): " +
+                        title + ", " +
+                        "Polifonia Project, [online]. " +
+                        kg_version + ". " +
+                        url +
+                        " [accessed " + currDate + "].";
+                }
+            },
+            copyCiteToClipboard(){
+                navigator.clipboard.writeText(this.citation);
+            },
             formatID(id){
                 let prefix = "";
                 if(id.includes("thesession")){
@@ -124,9 +225,6 @@
                 }
 
                 return prefix + id.split('/').pop();
-            },
-            toTuneFamilyPage(fam){
-                this.$router.push({ name: 'TuneFamilyPage', params: { fam: fam}});
             },
             getTuneData(id){
                 let params = {
@@ -177,6 +275,7 @@
             changeTune(){
                 this.id = this.$route.params.id;
                 this.prev = this.$route.params.prev;
+                this.prevTitle = this.$route.params.prevTitle;
 
                 this.init();
             },
@@ -203,3 +302,9 @@
         },
     }
 </script>
+
+<style scoped>
+.citationWindow{
+    max-width: 500px;
+}
+</style>

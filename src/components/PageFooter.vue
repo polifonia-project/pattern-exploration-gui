@@ -16,7 +16,8 @@
                 <div class="col mb-3">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-white">Search</a></li>
-                        <li class="nav-item mb-2"><a href="/about" class="nav-link p-0 text-white">About</a></li>
+                        <!--li class="nav-item mb-2"><a @click="toAboutPage()" class="nav-link p-0 text-white">About</a></li-->
+                        <li class="nav-item mb-2"><router-link class="nav-link p-0 text-white" to="/about">About</router-link></li>
                     </ul>
                 </div>
 
@@ -25,8 +26,11 @@
                     <p>{{KGVersion}}</p>
                 </div>
             </div>
+            <div class="row">
+                <p style="font-size: small;"><a class="text-white" href="https://www.freepik.com/free-vector/low-poly-abstract-design_7178735.htm">Background image by kjpargeter</a> on Freepik</p>
+            </div>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+            <div class="d-flex flex-column flex-sm-row justify-content-between border-top py-4 my-4">
                 <p>
                     <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
                         <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png">
@@ -69,6 +73,9 @@ export default {
                     .catch(() => {});
             }
         },
+        toAboutPage() {
+            this.$router.push({ name: 'AboutPage'});
+        }
     },
     mounted() {
         // Download the knowledge graph version if necessary.

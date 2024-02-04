@@ -1,5 +1,5 @@
 <template>
-    <svg id="svg2" width="100%" height="auto" style="border:1px solid black" viewBox="0 0 1000 700" class="container-border col-lg-12"></svg>
+    <svg id="svg2" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12"></svg>
 </template>
 
 <script>
@@ -239,7 +239,7 @@ export default {
                 clearTimeout(timeout);
 
                 if(clickedNode.type === "tune"){
-                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id}});
+                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id, prevTitle: ng.tuneData[0].title.value}});
                 } else if (clickedNode.type === "pattern") {
                     ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});
                 } else {

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="row pt-5">
-            <div class="col-8 col-xs-12">
+            <div class="col-8 col-xs-8">
                 <div v-if="!advanced_search" class="mb-3">
                     <input type="text" class="form-control" v-model="searchTerm" @keydown.enter="search" placeholder="Search...">
                     <div v-if="!valid_pattern">Valid pattern delimiters: _ , - </div>
@@ -46,16 +46,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4 col-xs-4">
+            <div class="col-4 col-xs-4 my-1">
                 <div class="row p-0">
                     <div class="col-md-6 col-xs-12">
                         <button type="button" class="btn btn-primary" @click="search()">Search</button>
                     </div>
-                    <div class="col-md-6 col-xs-12">
+                    <div class="dropdown col-md-6 col-xs-12 my-1">
                         <select class="form-select" v-model="searchType">
-                            <option value="title">Title</option>
-                            <option value="pattern">Pattern</option>
-                            <option value="advanced">Advanced</option>
+                            <option class="dropdown-item" value="title">Title</option>
+                            <option class="dropdown-item" value="pattern">Pattern</option>
+                            <option class="dropdown-item" value="advanced">Advanced</option>
                         </select>
                     </div>
                 </div>
@@ -115,7 +115,7 @@ export default {
         return {
             searchTerm: '',
             searchResults: [],
-            searchType: 'title',  // set default value to 'pattern',
+            searchType: 'title',
             title: '',
             pattern: '',
             corpus: [],
@@ -175,7 +175,7 @@ export default {
                         params.searchTerm = this.searchTerm.replaceAll(/[_, -]\s*/g, ', ')
                     }
                     else if(params.searchType === "advanced"){
-                        params.pattern = this.pattern.replaceAll(/[_, -]/g, ', ')
+                        params.pattern = this.pattern.replaceAll(/[_, -]\s*/g, ', ')
                     }
 
                     // Change url
