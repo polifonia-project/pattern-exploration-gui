@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <div class="row mb-5">
+        <div class="row mb-3">
             <div class="row">
             <h1>{{title.replace(/^(.*?)(?:, The)$/, "The $1")}}</h1>
             </div>

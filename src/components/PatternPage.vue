@@ -56,7 +56,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="(tune, index) in tuneData" :key="index" @click="toCompositionPage(tune.id.value)">
-                    <td>{{ tune.tune_name.value }}</td>
+                    <td>{{ "tune_name" in tune && tune.tune_name.value ? tune.tune_name.value.replace(/^(.*?)(?:, The)$/, "The $1") : 'Unknown' }}</td>
                     <td>{{ this.formatID(tune.id.value)}}</td>
                 </tr>
                 </tbody>
