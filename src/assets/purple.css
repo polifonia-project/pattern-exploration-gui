@@ -117,13 +117,13 @@ select option:hover {
   color: #fff;
   background-color: #bd6dff;
 }
-
+*/
 .form-check-input:checked {
   //background-image: linear-gradient(120deg, #6400B5, #FF0000);
   background-color: #6400B5;
   border-color: #6400B5;
 }
-*/
+
 /*
 .form-switch .form-check-input:checked {
   background-position: right center;
