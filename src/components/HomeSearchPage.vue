@@ -181,7 +181,7 @@ export default {
                     // Change url
                     this.$router.push({name: 'HomeSearchPage', query: params})
                     // Send request to backend.
-                    this.searchRequest(params);
+                    //this.searchRequest(params);
                 } else {
                     this.noResults = false;
                 }
