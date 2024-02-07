@@ -11,6 +11,18 @@ release-date: 01/03/2024
 release-number: v0.1.0
 licence:
 - GNU_GPL_v3
+contributors:
+- James McDermott <https://github.com/jmmcd>
+- Pushkar Jajoria <https://github.com/pushkarjajoria>
+- Rory Sweeney <https://github.com/rorys4>
+related-components:
+- story:
+  - Brendan#1_FindTraditionalMusic
+- persona:
+  - Brendan
+- reuses:
+  - "pattern-explorations-backend"
+  - "patterns-knowledge-graph"
 bibliography:
 - publication: 
   - "Polifonia Deliverable 5.6"
@@ -18,16 +30,6 @@ links:
 - https://github.com/polifonia-project/pattern-exploration-gui
 - https://polifonia.disi.unibo.it/patterns/index.html (TODO)
 - https://zenodo.org/record/ (TODO)
-contributors:
-- James McDermott <https://github.com/jmmcd>
-- Pushkar Jajoria <https://github.com/pushkarjajoria>
-- Rory Sweeney <https://github.com/rorys4>
-related-components:
-- reuses:
-  - "pattern-explorations-backend"
-  - "patterns-knowledge-graph"
-links:
-- https://github.com/polifonia-project/pattern-exploration-gui
 funder:
   - name: Horizon 2020 Framework Programme
     url: https://cordis.europa.eu/programme/id/H2020-EC
