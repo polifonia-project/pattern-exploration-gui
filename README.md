@@ -44,6 +44,8 @@ credits: "This project has received funding from the European Union’s Horizon 
 
 This repository contains the frontend server for the Music Pattern Exploration project. The frontend is built using Vue.js (@vue/cli 5.0.8) and communicates with a separate Python backend server for data. It features a search home page and a tune page.
 
+This software forms part of Polifonia Deliverable D5.6.
+
 ## Prerequisites
 
 - Node.js and npm
