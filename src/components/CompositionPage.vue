@@ -10,10 +10,12 @@
                 </div>
             </div>
             <div class="row">
-                <div v-if="this.tuneFamily !== 'Unknown'" class="col-12">
+                <div v-if="this.tuneFamily !== 'Unknown'">
                     <router-link class="nav-link p-0" :to="'/family/' + this.tuneFamily">Tune Family: {{tuneFamily.replaceAll("_"," ")}}</router-link>
                 </div>
-                <div v-if="this.link" class="col-12">
+            </div>
+            <div class="row">
+                <div v-if="this.link">
                     <a class="nav-link p-0" v-bind:href="link">More Information</a>
                 </div>
             </div>
