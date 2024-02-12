@@ -1,6 +1,6 @@
 ---
 component-id: pattern-exploration-gui
-type: Application
+type: WebApplication
 name: Pattern Exploration GUI
 description: A frontend interface for dispaying data derived from the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph).
 work-package:
@@ -16,11 +16,20 @@ contributors:
 - Pushkar Jajoria <https://github.com/pushkarjajoria>
 - Rory Sweeney <https://github.com/rorys4>
 related-components:
+- story:
+  - Brendan#1_FindTraditionalMusic
+- persona:
+  - Brendan
 - reuses:
   - "pattern-explorations-backend"
   - "patterns-knowledge-graph"
+bibliography:
+- publication: 
+  - "Polifonia Deliverable 5.6"
 links:
 - https://github.com/polifonia-project/pattern-exploration-gui
+- https://polifonia.disi.unibo.it/patterns/index.html (TODO)
+- https://zenodo.org/record/ (TODO)
 funder:
   - name: Horizon 2020 Framework Programme
     url: https://cordis.europa.eu/programme/id/H2020-EC
@@ -34,6 +43,8 @@ credits: "This project has received funding from the European Union’s Horizon 
 ## Description
 
 This repository contains the frontend server for the Music Pattern Exploration project. The frontend is built using Vue.js (@vue/cli 5.0.8) and communicates with a separate Python backend server for data. It features a search home page and a tune page.
+
+This software forms part of Polifonia Deliverable D5.6.
 
 ## Prerequisites
 
