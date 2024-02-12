@@ -1,6 +1,6 @@
 ---
 component-id: pattern-exploration-gui
-type: Application
+type: WebApplication
 name: Pattern Exploration GUI
 description: A frontend interface for dispaying data derived from the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph).
 work-package:
