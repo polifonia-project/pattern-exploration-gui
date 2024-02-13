@@ -244,8 +244,8 @@ export default {
             this.simulation.force("link").links(this.graphData.links);
             this.simulation.alpha(0.1).restart();
 
-            this.node.on("click", clicked);
-            this.node.on("dblclick", dblclicked);
+            this.node.on("click", clicked)
+                .on("dblclick", dblclicked);
 
             // add zoom capabilities
             let zoomHandler = d3.zoom()
@@ -271,19 +271,14 @@ export default {
                     } else {
                         ng.noNeighboursFeedback(this);
                     }
-                }, 100);
+                }, 300);
             }
 
             function dblclicked(event, clickedNode) {
                 clearTimeout(timeout);
 
-                if(clickedNode.type === "tune"){
+                if(clickedNode.id !== ng.id){
                     ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id, prevTitle: ng.tuneData[0].title.value}});
-                } else if (clickedNode.type === "pattern") {
-                    ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});
-                } else {
-                    //error
-                    console.error("Invalid node type.")
                 }
             }
 
