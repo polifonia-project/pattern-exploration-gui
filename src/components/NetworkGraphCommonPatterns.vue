@@ -1,5 +1,5 @@
 <template>
-    <svg id="svg2" width="100%" height="auto" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12">
+    <svg id="svg2" width="100%" height="100%" style="border:1px solid black; background-color:white" viewBox="0 0 1000 700" class="container-border col-lg-12">
         <defs>
             <radialGradient id="black" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="0%">
                 <stop offset="0%" stop-color="#cccccc" />
@@ -34,7 +34,7 @@
                 <stop offset="100%" stop-color="#CC79A7" />
             </radialGradient>
             <filter id="shadow" filterUnits="objectBoundingBox" x="-10%" y="-10%" width="300%" height="300%" color-interpolation-filters="sRGB">
-                <feDropShadow dx="40%" dy="40%" stdDeviation="3" flood-color="shadow" flood-opacity="0.5" />
+                <feDropShadow dx="5" dy="5" stdDeviation="3" flood-color="shadow" flood-opacity="0.5" />
             </filter>
         </defs>
     </svg>

@@ -6,6 +6,9 @@
             <a href="/" class="navbar-brand">
                 <img src="@/assets/logo-polifonia.svg" alt="">
             </a>
+            <a href="/" class="navbar-brand align-bottom pl-3 pe-4 pb-0 pt-2">
+                <span id="site_name">Patterns UI</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,4 +31,10 @@ export default {
     name: 'TopNavbar'
 };
 </script>
+
+<style scoped>
+#site_name {
+    font-size: 25px;
+}
+</style>
 

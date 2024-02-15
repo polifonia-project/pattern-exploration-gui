@@ -38,9 +38,10 @@
                     Polifonia H2020 is licensed under a&nbsp;<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" class="text-white">Creative Commons Attribution 4.0 International License</a>.
                 </p>
                 <ul class="list-unstyled d-flex">
-                    <li class="ms-3"><a class="link-body-emphasis" href="https://twitter.com/PolifoniaH2020"><img  class="bi" width="24" height="24" src="@/assets/x_logo_white.svg" alt="X.com"></a></li>
-                    <li class="ms-3"><a class="link-body-emphasis" href="https://linkedin.com/company/polifonia-h2020"><img  class="bi" width="24" height="24" src="@/assets/linkedin_white.png" alt="LinkedIn"></a></li>
-                    <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/polifonia-project"><img  class="bi" width="24" height="24" src="@/assets/github-mark-white.svg" alt="Github"></a></li>
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://polifonia.disi.unibo.it/portal/"><img  class="bi" width="24" height="24" src="@/assets/polifonia_logo_without_text_white.svg" title="Polifonia Web Portal"></a></li>
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://twitter.com/PolifoniaH2020"><img  class="bi" width="24" height="24" src="@/assets/x_logo_white.svg" title="X.com"></a></li>
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://linkedin.com/company/polifonia-h2020"><img  class="bi" width="24" height="24" src="@/assets/linkedin_white.png" title="LinkedIn"></a></li>
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/polifonia-project"><img  class="bi" width="24" height="24" src="@/assets/github-mark-white.svg" title="Github"></a></li>
                 </ul>
             </div>
         </div>

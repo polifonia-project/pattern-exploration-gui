@@ -19,7 +19,7 @@ export default {
 <style>
 .main{
     //background-image: url("@/assets/bg3.jpg");
-    background-image: linear-gradient(rgba(255,255,255,0.45), rgba(255,255,255,0.45)), url("@/assets/bg3.jpg");
+    background-image: linear-gradient(90deg, rgba(255,255,255,0.75), rgba(255,255,255,0.30)), url("@/assets/bg3.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center top;

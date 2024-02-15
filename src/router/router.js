@@ -4,6 +4,7 @@ import Composition from '../components/CompositionPage.vue'
 import Pattern from '../components/PatternPage.vue'
 import TuneFamily from '../components/TuneFamilyPage.vue'
 import AboutPage from '../components/AboutPage.vue'
+import sampleSPARQLQueries from '../components/sampleSPARQLQueries.vue'
 
 const routes = [
   {
@@ -33,6 +34,12 @@ const routes = [
     path: '/about',
     name: 'AboutPage',
     component: AboutPage,
+    props: false
+  },
+  {
+    path: '/queries',
+    name: 'sampleSPARQLQueries',
+    component: sampleSPARQLQueries,
     props: false
   },
 ]
