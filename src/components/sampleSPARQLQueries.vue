@@ -90,7 +90,7 @@ WHERE {
     ?annotation jams:includesObservation ?observation.
     ?observation jams:ofPattern ?patternURI.
     ?patternURI xyz:pattern_content ?pattern.
-} group by ?pattern
+} GROUP BY ?pattern
 ORDER BY DESC (?patternFreq) ?pattern LIMIT 10
                         </code>
                     </pre>
