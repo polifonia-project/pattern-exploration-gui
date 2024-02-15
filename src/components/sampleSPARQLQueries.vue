@@ -91,7 +91,7 @@ WHERE {
     ?observation jams:ofPattern ?patternURI.
     ?patternURI xyz:pattern_content ?pattern.
 } group by ?pattern
-order by DESC (?patternFreq) ?pattern LIMIT 10
+ORDER BY DESC (?patternFreq) ?pattern LIMIT 10
                         </code>
                     </pre>
                 </div>
