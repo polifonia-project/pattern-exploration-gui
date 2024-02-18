@@ -23,25 +23,25 @@
                     <div class="mb-3 row">
                         <label for="item_corpus" class="col-sm-2 col-form-label">Corpus</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_corpus" v-model="corpus" :options="corpusOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" @keydown.enter="search"/>
+                            <Multiselect id="item_corpus" v-model="corpus" :options="corpusOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" placeholder="Filter..." @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_key" class="col-sm-2 col-form-label">Key</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_key" v-model="key" :options="keyOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" @keydown.enter="search"/>
+                            <Multiselect id="item_key" v-model="key" :options="keyOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" placeholder="Filter..." @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_time_signature" class="col-sm-2 col-form-label">Time Signature</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_time_signature" v-model="timeSignature" :options="timeSignatureOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" @keydown.enter="search"/>
+                            <Multiselect id="item_time_signature" v-model="timeSignature" :options="timeSignatureOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" placeholder="Filter..." @keydown.enter="search"/>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="item_tune_type" class="col-sm-2 col-form-label">Tune Type</label>
                         <div class="col-sm-10">
-                            <Multiselect id="item_tune_type" v-model="tuneType" :options="tuneTypeOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" @keydown.enter="search"/>
+                            <Multiselect id="item_tune_type" v-model="tuneType" :options="tuneTypeOptions" mode="tags" :close-on-select="false" searchable="true" :clear-on-select="false" :preserve-search="true" placeholder="Filter..." @keydown.enter="search"/>
                         </div>
                     </div>
                 </div>
