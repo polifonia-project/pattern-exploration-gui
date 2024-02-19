@@ -401,7 +401,7 @@ export default {
                 [
                     ["Double-Clicking"],
                     ["Double-clicking a node navigates to the", "selected node's tune or pattern page."],
-                    ["The center panel that appears shows", "patterns in common with the previous tune."]
+                    ["If a tune node is double-clicked, the center", "panel appears, which shows patterns in",  "common between the current tune and the", "previous tune."]
                 ],
                 [
                     ["Tune Family"],
