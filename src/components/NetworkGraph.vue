@@ -425,14 +425,7 @@ export default {
                 ],
             ];
 /*
-            let tut_images = [
-                [
-                    "", ""
-                ],
-                [
-                    "", ""
-                ],
-            ];
+            let tut_images = [];
 */
             let num_panes = tut_strings.length;
 
