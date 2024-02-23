@@ -1,7 +1,7 @@
 ---
 component-id: pattern-exploration-gui
 type: WebApplication
-name: Pattern Exploration GUI
+name: Patterns UI
 description: A frontend interface for dispaying data derived from the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph).
 work-package:
 - WP5
@@ -42,7 +42,7 @@ credits: "This project has received funding from the European Union’s Horizon 
 
 ## Description
 
-This repository contains the frontend server for the Music Pattern Exploration project. The frontend is built using Vue.js (@vue/cli 5.0.8) and communicates with a separate Python backend server for data. It features a search home page and a tune page.
+This repository contains source code for the frontend of the Polifonia Patterns UI Music Patterns Exploration project. It is built using Vue.js (@vue/cli 5.0.8) and communicates with a separate Python backend server which queries a knowledge graph for data. It features a 'Search' home page, `Composition` pages for each tune, `Pattern` pages, `Tune Family` pages and an `About` page. It is a tool that provides interactive network visualisations and tabular data to allow exploration and discovery of similar tunes across different traditional European music corpuses. 
 
 This software forms part of Polifonia Deliverable D5.6.
 
@@ -75,19 +75,10 @@ The application will start and is accessible via `http://localhost:8080` in your
 
 **Note:** Make sure that the backend server is also running and accessible for the frontend to fetch data.
 
-## Usage
-
-- **Search Home Page:** 
-- **Tune Page:** 
-
-## Contributing
-
-Contributions to the Music Pattern Exploration Frontend are welcomed! If you wish to contribute, please fork the repository and submit a pull request.
-
 ## Backend Server
 
-The frontend server communicates with a separate backend server.
+The frontend server communicates with a separate [backend server](https://github.com/polifonia-project/pattern-explorations-backend).
 
-## Contact
+## Knowledge Graph
 
-For any inquiries or issues, please feel free to contact me at [pushkar.jajoria@universityofgalway.ie].
+The interface uses data provided by the [Patterns Knowledge Graph](https://github.com/polifonia-project/patterns-knowledge-graph) and the [Tunes Knowledge graph](https://github.com/polifonia-project/tunes-knowledge-graph).
