@@ -385,7 +385,7 @@ export default {
         },
         tutorial_panes(){
             // Reference to NetworkGraph.vue component context.
-            let ng=this;
+            //let ng=this;
 
             let tut_strings = [
                 [
@@ -424,8 +424,33 @@ export default {
                     ["Reset the visualisation by clicking the", "'reset' button below the 'back' button.", ""]
                 ],
             ];
+
 /*
-            let tut_images = [];
+            let tut_img_1_1 = d3.select('#svg1').node().appendChild("circle")
+                .attr("r", this.tune_radius)
+                .attr('cx', '200')
+                .attr('cy', '220')
+                .attr('stroke-width', 3)
+                .attr('fill', "url(#orange)")
+                .attr('filter', "url(#shadow)");
+
+            let tut_img_1_2 = d3.select('#svg1').node().appendChild("circle")
+                .attr("r", this.pattern_radius)
+                .attr('cx', '200')
+                .attr('cy', '385')
+                .attr('stroke-width', 3)
+                .attr('fill', "url(#black)")
+                .attr('filter', "url(#shadow)");
+
+            let tut_images = [
+                [tut_img_1_1, tut_img_1_2],
+                [],
+                [],
+                [],
+                [],
+                [],
+                []
+            ];
 */
             let num_panes = tut_strings.length;
 
@@ -434,10 +459,10 @@ export default {
                 .attr('class', 'tutorial');
 
             for(let i = 0; i < num_panes; i++){
-                draw_pane(tutorial, i, tut_strings[i], num_panes);
+                draw_pane(tutorial, i, tut_strings[i], /*tut_images[i],*/ num_panes);
             }
 
-            function draw_pane(tutorial, i, tut_strings, num_panes) {
+            function draw_pane(tutorial, i, tut_strings, /*tut_images,*/ num_panes) {
                 let tut1 = tutorial.append('g')
                     .attr('class', 'tut'+i)
                     .attr('id', 'tut'+i)
@@ -540,23 +565,12 @@ export default {
 
                 closePaneButton.on("click", close_pane);
 
+            /*
                 // Images
-                tut1.append("circle")
-                    .attr("r", ng.tune_radius)
-                    .attr('cx', '200')
-                    .attr('cy', '220')
-                    .attr('stroke-width', 3)
-                    .attr('fill', "url(#orange)")
-                    .attr('filter', "url(#shadow)");
-
-                tut1.append("circle")
-                    .attr("r", ng.pattern_radius)
-                    .attr('cx', '200')
-                    .attr('cy', '385')
-                    .attr('stroke-width', 3)
-                    .attr('fill', "url(#black)")
-                    .attr('filter', "url(#shadow)");
-
+                for(let j in tut_images){
+                    tut1.append(tut_images[j]);
+                }
+             */
             }
 
             function previous_pane(event) {
