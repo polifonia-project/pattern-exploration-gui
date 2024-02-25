@@ -68,6 +68,12 @@
                         No patterns in common.
                     </div>
                 </div>
+                <div class="row">
+                    <div class="form-check form-switch">
+                        <input v-model="exclude_trivial_patterns_diff" class="form-check-input" type="checkbox" id="item_exclude_trivial_patterns_diff" checked>
+                        <label class="form-check-label" for="item_exclude_trivial_patterns_diff">Exclude Trivial Patterns</label>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-8 col-md-12 px-4">
                 <div class="row px-3 mb-2">
@@ -111,6 +117,7 @@
                 tuneFamily: "",
                 link: "",
                 exclude_trivial_patterns: true,
+                exclude_trivial_patterns_diff: true,
                 id: this.$route.params.id,
                 prev: this.$route.params.prev,
                 prevTitle: this.$route.params.prevTitle,
@@ -164,10 +171,11 @@
                         console.error(error);
                     });
             },
-            getPatternsInCommon(curr_id, prev_id) {
+            getPatternsInCommon(curr_id, prev_id, etp) {
                 let params = {
                     id: curr_id,
-                    prev: prev_id
+                    prev: prev_id,
+                    excludeTrivialPatterns: etp,
                 };
                 axios.get(process.env.VUE_APP_SERVER_URL + '/api/common_patterns', { params })
                     .then(response => {
@@ -197,7 +205,7 @@
 
                 if(this.prev){
                     // On page load or reroute, download the patterns in common between this tune and the previous one.
-                    this.getPatternsInCommon(this.id, this.prev);
+                    this.getPatternsInCommon(this.id, this.prev, this.exclude_trivial_patterns_diff);
                 }
             }
         },
@@ -207,6 +215,12 @@
         watch: {
             exclude_trivial_patterns() {
                 this.getPatterns(this.id, this.exclude_trivial_patterns);
+            },
+            exclude_trivial_patterns_diff() {
+                if(this.prev){
+                    // If 'exclude trivial patterns' is toggled, download the patterns in common between this tune and the previous one.
+                    this.getPatternsInCommon(this.id, this.prev, this.exclude_trivial_patterns_diff);
+                }
             },
         },
     }
