@@ -3,9 +3,9 @@
         <div class="container">
             <div class="row">
                 <div class="col mb-3">
-                    <a href="https://polifonia-project.eu/" class="d-flex align-items-center mb-3 link-body-emphasis text-decoration-none">
+                    <a href="https://polifonia.disi.unibo.it/portal/" class="d-flex align-items-center mb-3 link-body-emphasis text-decoration-none">
                         <!-- svg class="bi me-2" width="40" height="32"><use xlink:href="@/assets/logo-polifonia-white.svg"/></svg -->
-                        <img src="@/assets/logo-polifonia-white.svg" alt="">
+                        <img src="@/assets/logo-polifonia-web-portal-white.svg" alt="">
                     </a>
                 </div>
 
@@ -32,13 +32,13 @@
 
             <div class="d-flex flex-column flex-sm-row justify-content-between border-top py-4 my-4">
                 <p>
-                    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-                        <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png">
+                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+                        <img alt="GNU GPL v3" style="border-width:0" src="@/assets/GPLv3_Logo_white.svg">
                     </a>&nbsp;
-                    Polifonia H2020 is licensed under a&nbsp;<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" class="text-white">Creative Commons Attribution 4.0 International License</a>.
+                    Polifonia Patterns UI is licensed under the&nbsp;<a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="text-white">GNU General Public Licence version 3</a>.
                 </p>
                 <ul class="list-unstyled d-flex">
-                    <li class="ms-3"><a class="link-body-emphasis" href="https://polifonia.disi.unibo.it/portal/"><img  class="bi" width="24" height="24" src="@/assets/polifonia_logo_without_text_white.svg" title="Polifonia Web Portal"></a></li>
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://polifonia-project.eu/"><img  class="bi" width="24" height="24" src="@/assets/polifonia_logo_without_text_white.svg" title="Polifonia Web Portal"></a></li>
                     <li class="ms-3"><a class="link-body-emphasis" href="https://twitter.com/PolifoniaH2020"><img  class="bi" width="24" height="24" src="@/assets/x_logo_white.svg" title="X.com"></a></li>
                     <li class="ms-3"><a class="link-body-emphasis" href="https://linkedin.com/company/polifonia-h2020"><img  class="bi" width="24" height="24" src="@/assets/linkedin_white.png" title="LinkedIn"></a></li>
                     <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/polifonia-project"><img  class="bi" width="24" height="24" src="@/assets/github-mark-white.svg" title="Github"></a></li>
