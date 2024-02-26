@@ -47,9 +47,12 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
-  scrollBehavior() {
-    // always scroll to top
-    return { top: 0 }
+  scrollBehavior(to, from, savedPosition) {
+    if (to.name === 'sampleSPARQLQueries' || to.name === 'AboutPage') {
+      return { top: 0 }
+    } else {
+      return savedPosition
+    }
   },
 })
 
