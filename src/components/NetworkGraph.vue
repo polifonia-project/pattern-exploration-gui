@@ -197,7 +197,6 @@ export default {
                 ng.update();
             }
 
-
             // Tutorial Feature
             this.tutorial_panes();
 
@@ -385,7 +384,7 @@ export default {
         },
         tutorial_panes(){
             // Reference to NetworkGraph.vue component context.
-            //let ng=this;
+            let ng=this;
 
             let tut_strings = [
                 [
@@ -406,7 +405,7 @@ export default {
                 [
                     ["Tune Family"],
                     ["A tune node's colour represents", "its tune family."],
-                    ["The name of its tune family can be", "shown by hovering over the node."]
+                    ["The name of its tune family can be", "shown by hovering over the node.", "Try with the node shown on the left."]
                 ],
                 [
                     ["Zoom and Pan"],
@@ -416,7 +415,7 @@ export default {
                 [
                     ["Visualisation Types"],
                     ["The default visualisation type shows tunes", "linked to patterns they contain."],
-                    ["Pattern nodes can be hidden to show tunes", "linked to similar tunes based on common", "patterns."]
+                    ["Pattern nodes can be hidden by toggling the", "'Show Pattern Nodes' slider to show tunes", "linked to similar tunes based on common", "patterns."]
                 ],
                 [
                     ["Back and Reset Buttons"],
@@ -571,6 +570,65 @@ export default {
                     tut1.append(tut_images[j]);
                 }
              */
+
+                if(i == 0){
+                    tut1.append("circle")
+                        .attr("r", ng.tune_radius)
+                        .attr('cx', '200')
+                        .attr('cy', '220')
+                        .attr('stroke-width', 3)
+                        .attr('fill', "url(#orange)")
+                        .attr('filter', "url(#shadow)");
+
+                    tut1.append("circle")
+                        .attr("r", ng.pattern_radius)
+                        .attr('cx', '200')
+                        .attr('cy', '385')
+                        .attr('stroke-width', 3)
+                        .attr('fill', "url(#black)")
+                        .attr('filter', "url(#shadow)");
+                } else if (i == 1){
+                    tut1.append("circle")
+                        .attr("r", ng.tune_radius)
+                        .attr('cx', '190')
+                        .attr('cy', '385')
+                        .attr('stroke-width', 3)
+                        .attr('fill', "url(#orange)")
+                        .attr('filter', "url(#shadow)")
+                        .attr('stroke',"red");
+
+                    tut1.append("circle")
+                        .attr("id", "blah1")
+                        .attr("r", ng.pattern_radius)
+                        .attr('cx', '250')
+                        .attr('cy', '385')
+                        .attr('stroke-width', 3)
+                        .attr('fill', "url(#black)")
+                        .attr('filter', "url(#shadow)")
+                        .attr('stroke',"red")
+                } else if (i == 3){
+                    let n3 = tut1.append("circle")
+                        .attr("r", ng.tune_radius)
+                        .attr('cx', '200')
+                        .attr('cy', '385')
+                        .attr('stroke-width', 3)
+                        .attr('fill', "url(#orange)")
+                        .attr('filter', "url(#shadow)");
+                    n3.append('title')
+                        .text("Family");
+                }
+                else if (i == 6) {
+                    // Back button.
+                    tut1.append('path')
+                        .attr('transform', 'translate(200, 220)  scale(1.2)')
+                        .attr('d', 'M23.94624 27.25376a1.28 1.28 0 0 1-1.81312 1.81312l-7.68-7.68a1.28 1.28 0 0 1 0-1.81312l7.68-7.68a1.28 1.28 0 1 1 1.81312 1.81312L17.16992 20.48l6.77632 6.77376zM20.48 40.96A20.48 20.48 0 1 1 20.48 0a20.48 20.48 0 0 1 0 40.96zm0-2.56a17.92 17.92 0 1 0 0-35.84 17.92 17.92 0 0 0 0 35.84z')
+                        .attr('fill', 'black');
+                    // Reset button.
+                    tut1.append('path')
+                        .attr('transform', 'translate(205, 375) scale(0.04)')
+                        .attr('d', 'M146.358 714 C219.143 847.474 360.001 934 517 934 c212.963 0 391.858 -158.66 418.579 -367.974 c3.077 -24.104 25.112 -41.15 49.217 -38.074 c24.105 3.078 41.152 25.113 38.074 49.218 C990.558 830.286 774.393 1022 517 1022 c-173.766 0 -331.173 -87.715 -424 -226.4 V911 c0 24.3 -19.7 44 -44 44 S5 935.3 5 911 V670 c0 -24.3 19.7 -44 44 -44 h241 c24.3 0 44 19.7 44 44 s-19.7 44 -44 44 H146.358z m736.284 -404 C809.857 176.526 668.999 90 512 90 C299.037 90 120.142 248.66 93.421 457.974 c-3.077 24.104 -25.112 41.15 -49.217 38.074 C20.099 492.97 3.052 470.935 6.13 446.83 C38.442 193.714 254.607 2 512 2 c173.766 0 331.173 87.715 424 226.4 V113 c0 -24.3 19.7 -44 44 -44 s44 19.7 44 44 v241 c0 24.3 -19.7 44 -44 44 H739 c-24.3 0 -44 -19.7 -44 -44 s19.7 -44 44 -44 h143.642z')
+                        .attr('fill', 'black');
+                }
             }
 
             function previous_pane(event) {
