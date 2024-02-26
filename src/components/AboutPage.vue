@@ -13,6 +13,14 @@
                     as well as presenting a network visualisation through which related tunes can be found. More information about patterns of tune families
                     can be obtained through clicking to navigate to that items dedicated page.
                 </p>
+                <p>
+                    Patterns UI and the Patterns UI Backend are open source projects licenced under the GNU General Public Licence version 3.
+                    The source code for each are available in the following Github repositories:
+                    <ul style="list-style-type:none;">
+                        <li><a href="https://github.com/polifonia-project/pattern-exploration-gui">Patterns UI</a></li>
+                        <li><a href="https://github.com/polifonia-project/pattern-explorations-backend">Patterns UI Backend</a></li>
+                    </ul>
+                </p>
             </div>
         </div>
         <div class="row my-5" style="text-align: center">
