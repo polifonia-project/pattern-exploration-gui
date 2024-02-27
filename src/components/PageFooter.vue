@@ -15,8 +15,7 @@
 
                 <div class="col mb-3">
                     <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><a href="/" class="nav-link p-0 text-white">Search</a></li>
-                        <!--li class="nav-item mb-2"><a @click="toAboutPage()" class="nav-link p-0 text-white">About</a></li-->
+                        <li class="nav-item mb-2"><router-link class="nav-link p-0 text-white" to="/">Search</router-link></li>
                         <li class="nav-item mb-2"><router-link class="nav-link p-0 text-white" to="/about">About</router-link></li>
                     </ul>
                 </div>
@@ -74,9 +73,6 @@ export default {
                     .catch(() => {});
             }
         },
-        toAboutPage() {
-            this.$router.push({ name: 'AboutPage'});
-        }
     },
     mounted() {
         // Download the knowledge graph version if necessary.
