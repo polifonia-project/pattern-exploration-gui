@@ -42,6 +42,17 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- div class="row">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item"><a class="page-link">Previous</a></li>
+                            <li class="page-item"><a class="page-link">1</a></li>
+                            <li class="page-item"><a class="page-link">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div -->
                 <div class="row">
                     <div class="form-check form-switch">
                         <input v-model="exclude_trivial_patterns" class="form-check-input" type="checkbox" id="item_exclude_trivial_patterns" checked>
