@@ -10,9 +10,9 @@
                 </div>
 
                 <div class="col-md-4 mb-3 px-4 d-flex justify-content-center">
-                    <ul class="nav flex-column">
-                        <li class="nav-item mb-2"><router-link class="nav-link p-0 text-white" to="/">Search</router-link></li>
-                        <li class="nav-item mb-2"><router-link class="nav-link p-0 text-white" to="/about">About</router-link></li>
+                    <ul class="nav flex-column d-flex justify-content-center">
+                        <li class="nav-item mb-2 d-flex justify-content-center"><router-link class="nav-link p-0 text-white" to="/">Search</router-link></li>
+                        <li class="nav-item mb-2 d-flex justify-content-center"><router-link class="nav-link p-0 text-white" to="/about">About</router-link></li>
                     </ul>
                 </div>
 
