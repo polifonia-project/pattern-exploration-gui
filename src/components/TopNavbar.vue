@@ -1,8 +1,6 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-white">
         <div class="container-fluid">
-            <!-- a class="navbar-brand" href="/">Polifonia</a -->
-
             <router-link to="/" class="navbar-brand">
                 <img src="@/assets/logo-polifonia.svg" alt="">
             </router-link>
