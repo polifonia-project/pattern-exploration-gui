@@ -24,13 +24,13 @@
                 </div>
             </div>
             <div class="row mb-0">
-                <p style="font-size: x-small;" class="d-flex justify-content-center"><a class="text-white mb-0" href="https://www.freepik.com/free-vector/low-poly-abstract-design_7178735.htm">Background image by kjpargeter</a> on Freepik</p>
+                <p style="font-size: x-small;" class="bglink d-flex justify-content-center"><a class="text-white mb-0" href="https://www.freepik.com/free-vector/low-poly-abstract-design_7178735.htm">Background image by kjpargeter</a>&nbsp;on Freepik</p>
             </div>
             <div class="row">
                 <div class="d-flex flex-column flex-sm-row justify-content-between border-top py-4 my-4">
                     <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html" class="d-flex align-items-center text-white my-4">
                         <img alt="GNU GPLv3" style="border-width:0" src="@/assets/GPLv3_Logo_white.svg">
-                        <span class="ms-2">
+                        <span style="font-size: small;" class="ms-2">
                             Polifonia Patterns UI is licensed under the GNU General Public Licence version 3.
                         </span>
                     </a>
@@ -86,4 +86,21 @@ export default {
     //background-color: #6400B5;
     //background-color: #92a8d1;
 }
+
+.bglink a:link {
+    text-decoration: none;
+}
+
+.bglink a:visited {
+    text-decoration: none;
+}
+
+.bglink a:hover {
+    text-decoration: underline;
+}
+
+.bglink a:active {
+    text-decoration: none;
+}
+
 </style>
