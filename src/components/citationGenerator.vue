@@ -16,6 +16,8 @@
                             <label class="btn btn-outline-primary" for="vbtn-radio2">MLA</label>
                             <input @click="generateCitation('Harvard')" type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off">
                             <label class="btn btn-outline-primary" for="vbtn-radio3">Harvard</label>
+                            <input @click="generateCitation('Bibtex')" type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio4" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="vbtn-radio4">Bibtex</label>
                         </div>
                     </div>
                     <div class="col-8">
@@ -78,6 +80,14 @@ export default {
                     kg_version + ". " +
                     url +
                     " [accessed " + currDate + "].";
+            } else if (refStyle === "Bibtex") {
+                this.citation = "@online{patternsUI,\n" +
+                    "  author = {Polifonia Project},\n" +
+                    "  title = {Patterns UI: " + this.pageTitle + " },\n" +
+                    "  year = 2024,\n" +
+                    "  url = {" + url + "},\n" +
+                    "  note = {Accessed: " + currDate + "}\n" +
+                    "}";
             }
         },
         copyCiteToClipboard(){
