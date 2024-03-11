@@ -312,7 +312,8 @@ export default {
 
                 if(clickedNode.type === "tune"){
                     if(clickedNode.id !== ng.id){
-                        ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id, prevTitle: ng.tuneData[0].title.value}});
+                        ng.$router.push({ name: 'CompositionPage', params: { id: encodeURIComponent(clickedNode.id),
+                                prev: encodeURIComponent(ng.id), prevTitle: ng.tuneData[0].title.value}});
                     }
                 } else if (clickedNode.type === "pattern") {
                     ng.$router.push({ name: 'PatternPage', params: { pattern: clickedNode.id}});

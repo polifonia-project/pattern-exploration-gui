@@ -129,9 +129,9 @@
                 link: "",
                 exclude_trivial_patterns: true,
                 exclude_trivial_patterns_diff: true,
-                id: this.$route.params.id,
-                prev: this.$route.params.prev,
-                prevTitle: this.$route.params.prevTitle,
+                id: decodeURIComponent(this.$route.params.id),
+                prev: undefined,
+                prevTitle: undefined,
                 childDataLoaded: false,
                 pageTitle: "",
                 net_vis_show_pattterns: true,
@@ -201,8 +201,8 @@
                 this.$router.push({ name: 'PatternPage', params: { pattern: ptn}});
             },
             changeTune(){
-                this.id = this.$route.params.id;
-                this.prev = this.$route.params.prev;
+                this.id = decodeURIComponent(this.$route.params.id);
+                this.prev = decodeURIComponent(this.$route.params.prev);
                 this.prevTitle = this.$route.params.prevTitle;
 
                 this.init();
@@ -221,6 +221,11 @@
             }
         },
         mounted() {
+            if(this.$route.params.prev){
+                this.prev = decodeURIComponent(this.$route.params.prev);
+                this.prevTitle = this.$route.params.prevTitle;
+            }
+
             this.init();
         },
         watch: {

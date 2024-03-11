@@ -217,7 +217,7 @@ export default {
                 });
         },
         openDetails(id) {
-            this.$router.push({ name: 'CompositionPage', params: { id: id}});
+            this.$router.push({ name: 'CompositionPage', params: { id: encodeURIComponent(id)}});
         },
         pattern_validation(ptn){
             let regex = /^[0-9](?:(?:,\s|[_ ,-])[0-9]){3,}$/;

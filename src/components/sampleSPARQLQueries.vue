@@ -109,7 +109,7 @@ import 'prismjs/themes/prism.css'
 export default {
     name: "sampleSPARQLQueries",
     mounted() {
-        Prism.highlightAll(); // highlight your code on mount
+        Prism.highlightAll();
     }
 }
 </script>

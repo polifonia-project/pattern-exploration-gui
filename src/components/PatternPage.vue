@@ -63,7 +63,7 @@ export default {
             return prefix + id.split('/').pop();
         },
         toCompositionPage(id){
-            this.$router.push({ name: 'CompositionPage', params: { id: id}});
+            this.$router.push({ name: 'CompositionPage', params: { id: encodeURIComponent(id)}});
         },
         getTunesList(pattern) {
             let params = {

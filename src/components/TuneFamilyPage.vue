@@ -70,14 +70,14 @@ export default {
                 });
         },
         openDetails(id) {
-            this.$router.push({ name: 'CompositionPage', params: { id: id}});
+            this.$router.push({ name: 'CompositionPage', params: { id: encodeURIComponent(id)}});
         },
     },
     mounted() {
         // Set page title for the citation generator.
         this.pageTitle = this.fam.replaceAll("_"," ") + " Tune Family";
 
-        //Download the tune family memeber tunes data from the KG.
+        //Download the tune family member tunes data from the KG.
         this.getTuneFamilyMembers(this.fam);
     }
 }

@@ -303,7 +303,8 @@ export default {
                 clearTimeout(timeout);
 
                 if(clickedNode.id !== ng.id){
-                    ng.$router.push({ name: 'CompositionPage', params: { id: clickedNode.id, prev: ng.id, prevTitle: ng.tuneData[0].title.value}});
+                    ng.$router.push({ name: 'CompositionPage', params: { id: encodeURIComponent(clickedNode.id),
+                            prev: encodeURIComponent(ng.id), prevTitle: ng.tuneData[0].title.value}});
                 }
             }
 
