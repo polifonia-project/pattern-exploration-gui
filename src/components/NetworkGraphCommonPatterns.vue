@@ -33,6 +33,10 @@
                 <stop offset="0%" stop-color="#f5e4ed" />
                 <stop offset="100%" stop-color="#CC79A7" />
             </radialGradient>
+            <radialGradient id="grey" filterUnits="objectBoundingBox" cx="40%" cy="40%" r="50%" fx="40%" fy="40%" fr="1%">
+                <stop offset="0%" stop-color="#e6e6e6" />
+                <stop offset="100%" stop-color="#737373" />
+            </radialGradient>
             <filter id="shadow" filterUnits="objectBoundingBox" x="-10%" y="-10%" width="300%" height="300%" color-interpolation-filters="sRGB">
                 <feDropShadow dx="5" dy="5" stdDeviation="3" flood-color="shadow" flood-opacity="0.5" />
             </filter>
@@ -765,6 +769,8 @@ export default {
             let nodeColour;
             if(family in this.colourDict){
                 nodeColour = this.colourDict[family];
+            } else if (family == "Unknown") {
+                nodeColour = "grey";
             } else {
                 this.currentColour = (this.currentColour + 1)%7;
                 nodeColour = this.colourList[this.currentColour];
